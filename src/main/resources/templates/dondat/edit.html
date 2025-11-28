@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
+    <h2 class="text-xl font-semibold mb-4">Chi tiết đơn hàng</h2>
+
+    <div class=" bg-white bg-white mb-4">
+        <form th:action="@{/order/edit}" th:object="${dondatDTO}" method="post" class="space-y-5">
+
+            <div class="row">
+                <div class="col-6">
+                    <input th:field="*{maDD}" type="text" hidden/>
+                    <label class="block mb-1 font-medium text-gray-700">Thời gian đặt</label>
+                    <input disabled required type="datetime-local" th:field="*{thoiGianDat}"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Khách hàng</label>
+                    <input disabled required type="text" th:field="*{tenKH}"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">SDT</label>
+                    <input disabled type="text" th:field="*{SDT}"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Mã bàn</label>
+                    <input disabled type="text" th:field="*{maBan}"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <label class="block mb-1 font-medium text-gray-700">Trạng thái</label>
+                    <select required th:field="*{trangThai}" class="w-full border px-4 py-2 rounded-md">
+                        <option value="Hoàn thành">Hoàn thành</option>
+                        <option value="Đang xử lý">Đang xử lý</option>
+                        <option value="Hủy">Hủy</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <a th:href="@{/order/detail/{id}/createSP(id=${maDD})}" style="width:100px;margin-bottom:1rem;text-align:center" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</a>
+                <table id="myTable" class="min-w-full table-auto border-collapse">
+                    <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border px-4 py-2 text-left">#</th>
+                        <th class="border px-4 py-2 text-left">Tên</th>
+                        <th class="border px-4 py-2 text-left">Hình ảnh</th>
+                        <th class="border px-4 py-2 text-left">Đơn giá</th>
+                        <th class="border px-4 py-2 text-left">Số lượng</th>
+                        <th class="border px-4 py-2 text-left"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(dondatDTO.listSP)}">
+                        <td colspan="5" class="text-center text-gray-500">Không có sản phẩm nào.</td>
+                    </tr>
+                    <tr th:each="item, stat : ${dondatDTO.listSP}" class="odd:bg-white even:bg-gray-50">
+                        <td class="border px-4 py-2" th:text="${stat.index + 1}"></td>
+                        <td class="border px-4 py-2" th:text="${item.sanPhamDTO.tenSP}"></td>
+                        <td class="border px-4 py-2"><img style="width:60px;height:60px" th:src="${item.sanPhamDTO.hinhAnh}"/></td>
+                        <td id="giaTien" class="giaTien border px-4 py-2" th:text="${item.sanPhamDTO.donGiaText}"></td>
+                        <td class="border px-4 py-2" th:text="${item.soLuong}"></td>
+                        <td class="border px-4 py-2 space-x-2">
+                            <a th:href="@{/order/detail/{id}/editSP/{maSP}(id=${maDD}, maSP=${item.maSP})}" class="text-blue-600 hover:underline">Cập nhật</a>
+                            <a th:href="@{/order/detail/{id}/removeSP/{maSP}(id=${maDD}, maSP=${item.maSP})}" class="text-red-600 hover:underline">Xóa</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p th:text="${tongTien}"></p>
+            </div>
+
+
+            <button type="submit"
+                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-md transition">
+                Lưu thông tin
+            </button>
+
+        </form>
+        <hr/>
+        <div th:if="${isPayment}">
+            <p>Đã thanh toán</p>
+        </div>
+        <div th:unless="${isPayment}">
+            <form th:action="@{/order/payment}" th:object="${hoaDonDTO}" method="post">
+                <input th:field="*{maDD}" type="text" hidden/>
+                <input th:field="*{tongTien}" type="text" hidden/>
+                <div style="margin-top:4rem;margin-bottom:2rem" class="row">
+                    <div class="col-6">
+                        <label class="block mb-1 font-medium text-gray-700">Phương thức thanh toán</label>
+                        <select required th:field="*{pttt}" class="w-full border px-4 py-2 rounded-md">
+                            <option value="Tiền mặt">Tiền mặt</option>
+                            <option value="Chuyển khoản">Chuyển khoản</option>
+                            <option value="Quẹt thẻ">Quẹt thẻ</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="block mb-1 font-medium text-gray-700">Nhân viên thanh toán</label>
+                        <select required th:field="*{maNV}" class="w-full border px-4 py-2 rounded-md">
+                            <option th:each="item : ${listNV}"
+                                    th:value="${item.maNV}"
+                                    th:text="${item.tenNV}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit"
+                        class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-md transition">
+                    Thanh toán
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!--<div layout:fragment="scripts">-->
+<!--    <script>-->
+<!--    </script>-->
+<!--</div>-->
+</html>

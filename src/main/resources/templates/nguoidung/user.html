@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
+    <h2 class="text-xl font-semibold mb-4">Quản lý người dùng</h2>
+
+    <div class="mb-6">
+        <button onclick="window.location.href ='/user/create'" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo tài khoản</button>
+    </div>
+
+    <div class=" bg-white bg-white mb-4 overflow-auto">
+        <table id="myTable" class="min-w-full table-auto border-collapse">
+            <thead class="bg-gray-200">
+            <tr>
+                <th class="border px-4 py-2 text-left">#</th>
+                <th class="border px-4 py-2 text-left">Họ tên</th>
+                <th class="border px-4 py-2 text-left">Giới tính</th>
+                <th class="border px-4 py-2 text-left">Chức vụ</th>
+                <th style="width:150px" class="border px-4 py-2 text-left">Ngày sinh</th>
+                <th class="border px-4 py-2 text-left">SĐT</th>
+                <th class="border px-4 py-2 text-left">Email</th>
+                <th class="border px-4 py-2 text-left">Tài khoản</th>
+                <th class="border px-4 py-2 text-left"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user, stat : ${users}" class="odd:bg-white even:bg-gray-50">
+                <td class="border px-4 py-2" th:text="${stat.index + 1}"></td>
+                <td class="border px-4 py-2" th:text="${user.tenNV}"></td>
+                <td class="border px-4 py-2" th:text="${user.gioiTinh}"></td>
+                <td class="border px-4 py-2" th:text="${user.vaiTro}"></td>
+                <td class="border px-4 py-2" th:text="${user.ngaySinh}"></td>
+                <td class="border px-4 py-2" th:text="${user.sdtNV}"></td>
+                <td class="border px-4 py-2" th:text="${user.email}"></td>
+                <td class="border px-4 py-2" th:text="${user.maTaiKhoan}"></td>
+                <td class="border px-4 py-2 space-x-2">
+                    <a th:href="@{/user/edit/{id}(id=${user.maNV})}" class="text-blue-600 hover:underline">Sửa</a>
+<!--                    <a th:href="@{/user/edit/{id}(id=${user.maNV})}" class="text-red-600 hover:underline">Xóa</a>-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('userNavId')?.classList.add('font-bold', 'text-blue-800');
+        });
+        $('#myTable').DataTable({
+          language: {
+            search: "Tìm kiếm:",
+            paginate: {
+              previous: "Trước",
+              next: "Sau"
+            }
+          }
+        });
+    </script>
+</div>
+</html>

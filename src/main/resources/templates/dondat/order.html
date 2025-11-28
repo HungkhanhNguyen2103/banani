@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
+    <h2 class="text-xl font-semibold mb-4">Quản lý đơn hàng</h2>
+
+
+    <div class="mb-6">
+        <a href="/order/create" style="text-align:center" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</a>
+    </div>
+
+    <div class=" bg-white bg-white mb-4 overflow-auto">
+        <table id="myTable" class="min-w-full table-auto border-collapse">
+            <thead class="bg-gray-200">
+            <tr>
+                <th class="border px-4 py-2 text-left">#</th>
+                <th class="border px-4 py-2 text-left">Mã đơn</th>
+                <th class="border px-4 py-2 text-left">Thời gian đặt</th>
+                <th class="border px-4 py-2 text-left">Tên KH</th>
+                <th class="border px-4 py-2 text-left">SDT</th>
+                <th class="border px-4 py-2 text-left">Mã Bàn</th>
+                <th class="border px-4 py-2 text-left">Trạng thái</th>
+                <th class="border px-4 py-2 text-left"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, stat : ${result}" class="odd:bg-white even:bg-gray-50">
+                <td class="border px-4 py-2" th:text="${stat.index + 1}"></td>
+                <td class="border px-4 py-2" th:text="${item.maDD}"></td>
+                <td class="border px-4 py-2" th:text="${item.thoiGianDat}"></td>
+                <td class="border px-4 py-2" th:text="${item.tenKH}"></td>
+                <td class="border px-4 py-2" th:text="${item.SDT}"></td>
+                <td class="border px-4 py-2" th:text="${item.maBan}"></td>
+                <td class="border px-4 py-2" th:text="${item.trangThai}"></td>
+                <td class="border px-4 py-2 space-x-2">
+                    <a th:href="@{/order/detail/{id}(id=${item.maDD})}" class="text-blue-600 hover:underline">Chi tiết</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script th:src="@{/resources/static/js/role.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('orderNavID')?.classList.add('font-bold', 'text-blue-800');
+        });
+        $('#myTable').DataTable({
+          language: {
+            search: "Tìm kiếm:",
+            paginate: {
+              previous: "Trước",
+              next: "Sau"
+            }
+          }
+        });
+    </script>
+</div>
+</html>

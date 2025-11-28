@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="position:fixed;width: -webkit-fill-available">
+    <h2 class="text-xl font-semibold mb-4">Quản lý chi nhánh</h2>
+
+    <div class="mb-6">
+        <button onclick="window.location.href ='/branch/create'" type="button" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</button>
+    </div>
+
+    <div class=" bg-white bg-white mb-4 overflow-auto">
+        <table id="myTable" class="min-w-full table-auto border-collapse">
+            <thead class="bg-gray-200">
+            <tr>
+                <th class="border px-4 py-2 text-left">#</th>
+                <th class="border px-4 py-2 text-left">Tên</th>
+                <th class="border px-4 py-2 text-left">Địa chỉ</th>
+                <th class="border px-4 py-2 text-left">SĐT</th>
+                <th class="border px-4 py-2 text-left"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cn, stat : ${chinhanhs}" class="odd:bg-white even:bg-gray-50">
+                <td class="border px-4 py-2" th:text="${stat.index + 1}"></td>
+                <td class="border px-4 py-2" th:text="${cn.tenCN}"></td>
+                <td class="border px-4 py-2" th:text="${cn.diaChi}"></td>
+                <td class="border px-4 py-2" th:text="${cn.sdt}"></td>
+                <td class="border px-4 py-2 space-x-2">
+                    <a th:href="@{/branch/edit/{id}(id=${cn.maCN})}" class="text-blue-600 hover:underline">Sửa</a>
+                    <a th:href="@{/branch/delete/{id}(id=${cn.maCN})}" class="text-blue-600 hover:underline">Xóa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('branchID')?.classList.add('font-bold', 'text-blue-800');
+        });
+        $('#myTable').DataTable({
+          language: {
+            search: "Tìm kiếm:",
+            paginate: {
+              previous: "Trước",
+              next: "Sau"
+            }
+          }
+        });
+    </script>
+</div>
+</html>

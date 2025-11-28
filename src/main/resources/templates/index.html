@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="position:fixed;width: -webkit-fill-available">
+    <h2 class="text-xl font-semibold mb-4">Quản lý bàn và khu vực</h2>
+
+    <div class="border-b mb-4">
+        <button class="text-red-600 font-semibold border-b-2 border-red-600 pb-2">Tất cả</button>
+    </div>
+
+    <div class="mb-6">
+        <button class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</button>
+        <input type="search" placeholder="Tìm theo mã tin hoặc tiêu đề" class="w-full max-w-md px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <div class=" bg-white bg-white mb-4 overflow-auto">
+        <table class="min-w-full table-auto border-collapse">
+            <thead class="bg-gray-200">
+            <tr>
+                <th class="border px-4 py-2 text-left">#</th>
+                <th class="border px-4 py-2 text-left">Tên sản phẩm</th>
+                <th class="border px-4 py-2 text-left">Giá</th>
+                <th class="border px-4 py-2 text-left">Tồn kho</th>
+                <th class="border px-4 py-2 text-left"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="odd:bg-white even:bg-gray-50">
+                <td class="border px-4 py-2">1</td>
+                <td class="border px-4 py-2">Áo thun trắng</td>
+                <td class="border px-4 py-2">150.000đ</td>
+                <td class="border px-4 py-2">25</td>
+                <td class="border px-4 py-2 space-x-2">
+                    <button class="text-blue-600 hover:underline" onclick="editProduct(1)">Sửa</button>
+                    <button class="text-red-600 hover:underline" onclick="deleteProduct(1)">Xóa</button>
+                </td>
+            </tr>
+            <tr class="odd:bg-white even:bg-gray-50">
+                <td class="border px-4 py-2">2</td>
+                <td class="border px-4 py-2">Quần jean xanh</td>
+                <td class="border px-4 py-2">320.000đ</td>
+                <td class="border px-4 py-2">12</td>
+                <td class="border px-4 py-2 space-x-2">
+                    <button class="text-blue-600 hover:underline" onclick="editProduct(1)">Sửa</button>
+                    <button class="text-red-600 hover:underline" onclick="deleteProduct(1)">Xóa</button>
+                </td>
+            </tr>
+            <tr class="odd:bg-white even:bg-gray-50">
+                <td class="border px-4 py-2">3</td>
+                <td class="border px-4 py-2">Giày sneaker</td>
+                <td class="border px-4 py-2">900.000đ</td>
+                <td class="border px-4 py-2">8</td>
+                <td class="border px-4 py-2 space-x-2">
+                    <button class="text-blue-600 hover:underline" onclick="editProduct(1)">Sửa</button>
+                    <button class="text-red-600 hover:underline" onclick="deleteProduct(1)">Xóa</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('ListPostId')?.classList.add('font-bold', 'text-blue-800');
+        });
+    </script>
+</div>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{account/_accountLayout}">
+
+<div layout:fragment="content" class="w-full">
+    <form th:action="@{/account/login}" th:object="${user}" method="post"
+          onsubmit="return validateCaptcha(event)"
+          class="w-full p-10 bg-white/80 rounded-l-none rounded-3xl">
+
+        <h2 class="text-lg text-gray-600">Chào mừng đến <span class="text-yellow-500 font-semibold">Banani Coffee</span></h2>
+        <h1 class="text-3xl font-bold mt-1 mb-6">Đăng nhập</h1>
+
+        <label class="block mb-2 text-sm font-medium text-gray-700" for="username">Tài khoản</label>
+        <div class="mb-4">
+            <input required type="text" id="username" th:field="*{maTaiKhoan}" placeholder="Tài khoản"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm input-bootstrap"/>
+        </div>
+
+        <label class="block mb-2 text-sm font-medium text-gray-700" for="password">Mật khẩu</label>
+        <div class="mb-2">
+            <input required type="password" id="password" th:field="*{matKhau}" placeholder="Mật khẩu"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm input-bootstrap"/>
+        </div>
+
+        <span th:text="${error}" class="text-red-500 text-sm"></span>
+
+        <!-- CAPTCHA -->
+        <div id="captchaForm" class="my-4">
+            <label class="block mb-1 text-sm text-gray-700">Mã xác thực</label>
+            <canvas id="captchaCanvas" width="200" height="60" class="mb-2 border"></canvas>
+            <button type="button" class="refresh-btn text-sm px-3 py-1 bg-blue-500 text-white rounded" onclick="generateCaptcha()">🔄 Làm mới</button>
+
+            <input onblur="validateCaptcha()" type="text" id="captchaInput" placeholder="Nhập mã CAPTCHA"
+                   class="w-full mt-2 border border-gray-300 rounded-md px-3 py-2 text-sm" required />
+
+            <div id="captchaResult" class="result text-sm mt-2"></div>
+        </div>
+
+        <!-- Nút submit -->
+        <button id="btn-submit" type="submit" disabled
+                class="mt-4 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-full mb-6 transition">
+            Đăng nhập
+        </button>
+
+        <!-- <a href="" style="color:blue">Quên mật khẩu ?</a> -->
+        <!-- <p class="text-sm text-center text-gray-600">Chưa có tài khoản? <a href="/account/register" class="text-orange-500 font-medium hover:underline">Đăng Ký Ngay</a></p> -->
+
+    </form>
+</div>
+
+<!-- Scripts -->
+</html>

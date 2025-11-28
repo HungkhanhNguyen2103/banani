@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
+    <h2 class="text-xl font-semibold mb-4">Tạo người dùng</h2>
+
+    <div class=" bg-white bg-white mb-4">
+        <form th:action="@{/user/create}" th:object="${nguoiDungDTO}" method="post" class="space-y-5">
+            <span class="text-red-600" th:text="${error}"></span>
+            <div class="row">
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Tài khoản</label>
+                    <input required type="text" th:field="*{maTaiKhoan}" placeholder="Nhập tài khoản"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Mật khẩu</label>
+                    <input required type="text" th:field="*{matKhau}" placeholder="Nhập mật khẩu"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Họ tên</label>
+                    <input required type="text" th:field="*{tenNV}" placeholder="Nhập họ tên"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Giới tính</label>
+                    <select required th:field="*{gioiTinh}" class="w-full border px-4 py-2 rounded-md">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Chức vụ</label>
+                    <select required th:field="*{vaiTro}" class="w-full border px-4 py-2 rounded-md">
+                        <option value="Phục vụ">Phục vụ</option>
+                        <option value="Thu ngân">Thu ngân</option>
+                        <option value="Pha chế">Pha chế</option>
+                        <option value="Quản lý">Quản lý</option>
+                    </select>
+                </div>
+
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Ngày sinh</label>
+                    <input required type="date" th:field="*{ngaySinh}"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Số điện thoại</label>
+                    <input required type="text" th:field="*{sdtNV}" placeholder="Nhập SĐT"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Email</label>
+                    <input required type="email" th:field="*{email}" placeholder="Nhập email"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <label class="block mb-1 font-medium text-gray-700">Chi nhánh</label>
+                    <select required th:field="*{maCN}" class="w-full border px-4 py-2 rounded-md">
+                        <option th:each="chinhanh : ${chinhanhs}"
+                                th:value="${chinhanh.maCN}"
+                                th:text="${chinhanh.diaChi}">
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <button type="submit"
+                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-md transition">
+                Lưu thông tin
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<!--<div layout:fragment="scripts">-->
+<!--    <script>-->
+<!--    </script>-->
+<!--</div>-->
+</html>
