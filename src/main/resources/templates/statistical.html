@@ -81,8 +81,13 @@
     function search(){
         let startDate = $('#startDate').val();
         let endDate = $('#endDate').val();
-        let value = $('#chinhanh').val();
-        document.location.href = '/statisticalFilter/' + value + `?startDate=${startDate}&endDate=${endDate}`;
+        let value = $('#chinhanh').val() ?? maCN;
+        if(startDate && endDate){
+           document.location.href = '/statisticalFilter/' + value + `?startDate=${startDate}&endDate=${endDate}`;
+        }
+        else document.location.href = '/statistical/' + value;
+        //console.log(startDate);
+        //document.location.href = '/statisticalFilter/' + value + `?startDate=${startDate}&endDate=${endDate}`;
     }
 
     function selectChiNhanh(){
