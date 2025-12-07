@@ -20,11 +20,15 @@ public class NhanVienController {
     public String index(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
-        var list = nhanVienRepository.getAllNhanVien();
+        var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
+
+        var list = nhanVienRepository.getAllNhanVien(maChiNhanh);
         var result = new ArrayList<NhanVienDTO>();
         for (var i : list){
             var nhanvien = new NhanVienDTO();
+            nhanvien.setMaNV((String) i[0]);
             nhanvien.setTenNV((String) i[1]);
             nhanvien.setSdtNV((String) i[4]);
             nhanvien.setEmailNV((String) i[5]);

@@ -2,52 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{_layout}">
-<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
+<div layout:fragment="content" class="bg-white px-6 pt-6">
+
     <h2 class="text-xl font-semibold mb-4">Quản lý bàn và khu vực</h2>
 
-
-    <div class=" bg-white bg-white mb-4 overflow-auto">
-        <table id="myTable" class="min-w-full table-auto border-collapse">
-            <thead class="bg-gray-200">
-            <tr>
-                <th class="border px-4 py-2 text-left">#</th>
-                <th class="border px-4 py-2 text-left">Mã bàn</th>
-                <th class="border px-4 py-2 text-left">Khu vực</th>
-                <th class="border px-4 py-2 text-left">Chi nhánh</th>
-                <th class="border px-4 py-2 text-left">Trạng thái</th>
-                <th class="border px-4 py-2 text-left"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="item, stat : ${listResult}" class="odd:bg-white even:bg-gray-50">
-                <td class="border px-4 py-2" th:text="${stat.index + 1}"></td>
-                <td class="border px-4 py-2" th:text="${item.tenBAN}"></td>
-                <td class="border px-4 py-2" th:text="${item.khuVuc}"></td>
-                <td class="border px-4 py-2" th:text="${item.chinhanh}"></td>
-                <td class="border px-4 py-2" th:text="${item.trangThai}"></td>
-                <td class="border px-4 py-2 space-x-2">
-                    <a th:href="@{/table/edit/{id}(id=${item.maBAN})}" class="text-blue-600 hover:underline">Cập nhật</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="mb-6">
+        <button onclick="window.location.href ='/table/create'" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</button>
     </div>
+
+    <div th:each="group : ${listResultGrouped}">
+        <h3 class="text-lg font-bold text-white px-4 py-2 mb-2 rounded"
+            style="background: linear-gradient(90deg, #0066cc, #0099ff);">
+            <span th:text="${group.key}"></span>
+            (<span th:text="${#lists.size(group.value)}"></span>)
+        </h3>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-6">
+            <a th:href="@{/table/order/{maBan}(maBan=${item.maBAN})}" th:each="item : ${group.value}"
+                 th:classappend="${item.trangThai == 'Đang sử dụng'} ? 'bg-red-600 text-white' : 'bg-teal-600 text-white'"
+                 class="rounded p-3 text-center shadow cursor-pointer hover:opacity-90 transition">
+
+                <div class="font-bold text-lg" th:text="${item.tenBAN}"></div>
+
+                <div th:if="${item.trangThai == 'Đang sử dụng'}" class="mt-1 text-sm">
+                    Đang sử dụng
+                </div>
+
+                <div th:if="${item.trangThai != 'Đang sử dụng'}" class="mt-1 text-sm">
+                    Trống
+                </div>
+
+            </a>
+        </div>
+    </div>
+
 </div>
 
 <div layout:fragment="scripts">
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('tableNavId')?.classList.add('font-bold', 'text-blue-800');
-        });
-        $('#myTable').DataTable({
-          language: {
-            search: "Tìm kiếm:",
-            paginate: {
-              previous: "Trước",
-              next: "Sau"
-            }
-          }
-        });
-    </script>
 </div>
 </html>

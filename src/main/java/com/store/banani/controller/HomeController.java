@@ -30,9 +30,14 @@ public class HomeController {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("vaiTro", vaiTro);
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         if(vaiTro.equals("Thu ngân")){
             return "redirect:/statistical/0";
+        }
+
+        if(vaiTro.equals("Admin")){
+            return "redirect:/branch";
         }
 
         if(vaiTro.equals("Phục vụ")){
@@ -69,6 +74,8 @@ public class HomeController {
         CookieUtils.removeCookie(response,CookieUtils.username);
         CookieUtils.removeCookie(response,CookieUtils.vaiTro);
         CookieUtils.removeCookie(response,CookieUtils.loggedInUser);
+        CookieUtils.removeCookie(response,CookieUtils.chiNhanh);
+        CookieUtils.removeCookie(response,CookieUtils.machiNhanh);
         return "redirect:/";
     }
 

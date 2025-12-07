@@ -10,9 +10,14 @@ public class DonDatDTO {
     private String maKH;
     private String tenKH;
     private String SDT;
+    private String EmailKH;
     private String maBan;
     private String trangThai;
+    private String thanhToan;
+    private String nut;
     private boolean payment;
+    private boolean inBill;
+    private float tongTien2;
 
     private ArrayList<CTDonDatDTO> listSP;
 
@@ -94,5 +99,45 @@ public class DonDatDTO {
 
     public void setPayment(boolean payment) {
         this.payment = payment;
+    }
+
+    public String getEmailKH() {
+        return EmailKH;
+    }
+
+    public void setEmailKH(String emailKH) {
+        EmailKH = emailKH;
+    }
+
+    public String getNut() {
+        return nut;
+    }
+
+    public void setNut(String nut) {
+        this.nut = nut;
+    }
+
+    public String getThanhToan() {
+        return thanhToan;
+    }
+
+    public void setThanhToan(String thanhToan) {
+        this.thanhToan = thanhToan;
+    }
+
+    public float getTongTien2() {
+        return tongTien2;
+    }
+
+    public void setTongTien2(float tongTien2) {
+        this.tongTien2 = tongTien2;
+    }
+
+    public boolean isInBill() {
+        return inBill;
+    }
+
+    public void setInBill(boolean inBill) {
+        this.inBill = inBill;
     }
 }

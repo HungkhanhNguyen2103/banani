@@ -5,7 +5,7 @@
 <div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
     <h2 class="text-xl font-semibold mb-4">Báo cáo và thống kê</h2>
 
-    <div class="mb-6">
+    <div th:if="${vaiTro == 'Admin'}" class="mb-6">
         <select required name="chinhanh" onchange="selectChiNhanh()" id="chinhanh" class="px-4 py-2 mr-4 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700">
             <option th:each="item : ${chinhanhs}"
                     th:value="${item.maCN}"
@@ -49,6 +49,7 @@
     let tenCN = /*[[${tenCN}]]*/ '';
     let diaChi = /*[[${diaChi}]]*/ '';
     let listInHoaDon = /*[[${listInHoaDon}]]*/ [];
+    let list = /*[[${list}]]*/ [];
     let startDate = /*[[${startDate}]]*/ '';
     let endDate = /*[[${endDate}]]*/ '';
 
@@ -101,14 +102,15 @@
 
       let dateNow = `${day}/${month}/${year} – ${hours}:${minutes}`;
 
+      let htmlDate = startDate != "yyyy-MM-dd" ? `<p>Từ ngày: ${startDate}  –  Đến ngày: ${endDate}</p>` : '';
+
       let htmlBody = '';
-      listInHoaDon.forEach((item,index) => {
+      list.forEach((item,index) => {
             htmlBody += `
                 <tr>
                     <td>${++index}</td>
-                    <td>${item.tenKH}</td>
-                    <td>${item.soluong}</td>
-                    <td>${item.tongTien}</td>
+                    <td>${item.label}</td>
+                    <td>${item.value}</td>
                 </tr>
             `;
       });
@@ -177,14 +179,13 @@
 
                           <div class="company-center">
                             <h3>BÁO CÁO DOANH THU BÁN HÀNG</h3>
-                            <p>Từ ngày: ${startDate}  –  Đến ngày: ${endDate}</p>
+                            ${htmlDate}
                           </div>
                         <table>
                             <thead>
                               <tr>
                                 <th>STT</th>
-                                <th>Họ và tên</th>
-                                <th>Số đơn hàng</th>
+                                <th>Ngày</th>
                                 <th>Tổng tiền</th>
                               </tr>
                             </thead>

@@ -33,6 +33,10 @@
             color: rgb(249 115 22 / var(--tw-bg-opacity, 1)) !important;
         }
 
+        .d-none{
+            display:none;
+        }
+
         .items-center{
             font-size:13px;
         }
@@ -60,68 +64,69 @@
                 <h3 style="font-size:15px" class="font-bold" th:text="${tenNV}"></h3>
                 <p class="text-gray-600 text-sm">
                     Chức vụ: <span id="chucVu" th:text="${vaiTro}"></span>
+                    <span class="block" th:if="${vaiTro != 'Admin'}">Chi nhánh: <span id="chiNhanh" th:text="${chiNhanh}"></span></span>
                 </p>
             </div>
         </div>
 
         <ul class="menu-bar space-y-2 text-sm">
-            <li th:if="${vaiTro == 'Quản lý' or vaiTro == 'Thu ngân'}">
+
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Quản lý' or vaiTro == 'Thu ngân'}">
                 <a href="/statistical/0" id="StatisticalId" class="flex items-center gap-2 px-2">
                     <i class="fas fa-chart-bar w-5 text-base"></i>
                     <span>Báo cáo và thống kê</span>
                 </a>
             </li>
-
-            <li th:if="${vaiTro == 'Quản lý' or vaiTro == 'Thu ngân'}">
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Thu ngân'}">
                 <a href="/payment" id="PaymentId" class="flex items-center gap-2 px-2">
                     <i class="fas fa-file-invoice w-5 text-base"></i>
                     <span>Thanh toán và hóa đơn</span>
                 </a>
             </li>
 
-            <li th:if="${vaiTro == 'Quản lý'}">
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Quản lý'}">
                 <a href="/employee" id="employeeId" class="flex items-center gap-2 px-2">
                     <i class="fas fa-user w-5 text-base"></i>
                     <span>Quản lý nhân viên</span>
                 </a>
             </li>
 
-            <li th:if="${vaiTro == 'Quản lý' or vaiTro == 'Thu ngân' or vaiTro == 'Phục vụ'}">
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Quản lý' or vaiTro == 'Thu ngân' or vaiTro == 'Phục vụ'}">
                 <a href="/table" id="tableNavId" class="flex items-center gap-2 px-2">
                     <i class="fas fa-table w-5 text-base"></i>
                     <span>Quản lý bàn và khu vực</span>
                 </a>
             </li>
 
-            <li th:if="${vaiTro == 'Quản lý' or vaiTro == 'Pha chế'}">
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Quản lý' or vaiTro == 'Pha chế'}">
                 <a href="/material" id="materialNavId" class="flex items-center gap-2 px-2">
                     <i class="fas fa-pump-soap w-5 text-base"></i>
                     <span>Quản lý kho nguyên vật liệu</span>
                 </a>
             </li>
 
-            <li th:if="${vaiTro == 'Quản lý' or vaiTro == 'Thu ngân' or vaiTro == 'Pha chế'}">
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Quản lý' or vaiTro == 'Thu ngân' or vaiTro == 'Pha chế'}">
                 <a href="/order" id="orderNavID" class="flex items-center gap-2 px-2">
                     <i class="fas fa-file-invoice-dollar w-5 text-base"></i>
                     <span>Quản lý đơn hàng</span>
                 </a>
             </li>
 
-            <li th:if="${vaiTro == 'Quản lý'}">
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Quản lý'}">
                 <a href="/product" id="producNavId" class="flex items-center gap-2 px-2">
                     <i class="fas fa-cookie-bite w-5 text-base"></i>
                     <span>Quản lý sản phẩm</span>
                 </a>
             </li>
 
-            <li th:if="${vaiTro == 'Quản lý'}">
+            <li th:if="${vaiTro == 'Admin' or vaiTro == 'Admin'}">
                 <a href="/branch" id="branchID" class="flex items-center gap-2 px-2">
                     <i class="fas fa-tags w-5 text-base"></i>
                     <span>Quản lý chi nhánh</span>
                 </a>
             </li>
 
-            <li th:if="${vaiTro == 'Quản lý'}">
+            <li th:if="${vaiTro == 'Admin'}">
                 <a href="/user" id="userNavId" class="flex items-center gap-2 px-2">
                     <i class="fas fa-user-cog w-5 text-base"></i>
                     <span>Quản lý người dùng</span>
@@ -144,31 +149,35 @@
 
 <div layout:fragment="scripts">
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let role = document.getElementById("chucVu").innerText.trim();
-            console.log('abc');
-            document.querySelectorAll("ul.menu-bar li").forEach(li => {
-                li.classList.add("d-none");
-            });
+<!--        document.addEventListener("DOMContentLoaded", function () {-->
+<!--            console.log("role");-->
+<!--            let role = document.getElementById("chucVu").innerText.trim();-->
+<!--            console.log(role);-->
+<!--            if(role !== "Admin"){-->
+<!--                document.querySelectorAll("ul.menu-bar li").forEach(li => {-->
+<!--                    li.classList.add("d-none");-->
+<!--                });-->
+<!--            }-->
 
-            if (role === "Quản lý") {
-                document.querySelectorAll("li.quanly").forEach(li => {
-                    li.classList.remove("d-none");
-                });
-            }
 
-            if (role === "Thu ngân") {
-                document.querySelectorAll("li.thuNgan").forEach(li => {
-                    li.classList.remove("d-none");
-                });
-            }
+<!--            if (role === "Quản lý") {-->
+<!--                document.querySelectorAll("li.quanly").forEach(li => {-->
+<!--                    li.classList.remove("d-none");-->
+<!--                });-->
+<!--            }-->
 
-            if (role === "Phục vụ") {
-                document.querySelectorAll("li.phucVu").forEach(li => {
-                    li.classList.remove("d-none");
-                });
-            }
-        });
+<!--            if (role === "Thu ngân") {-->
+<!--                document.querySelectorAll("li.thuNgan").forEach(li => {-->
+<!--                    li.classList.remove("d-none");-->
+<!--                });-->
+<!--            }-->
+
+<!--            if (role === "Phục vụ") {-->
+<!--                document.querySelectorAll("li.phucVu").forEach(li => {-->
+<!--                    li.classList.remove("d-none");-->
+<!--                });-->
+<!--            }-->
+<!--        });-->
     </script>
 </div>
 </body>

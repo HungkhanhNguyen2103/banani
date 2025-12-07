@@ -40,11 +40,15 @@ public class AccountController {
                 return "account/login";
             }
             Object[] row = (Object[])foundUser[0];
+            String maNV = (String) row[1];
             CookieUtils.setCookie(response,CookieUtils.loggedInUser,"true");
             CookieUtils.setCookie(response,CookieUtils.username,(String) row[0]);
-            CookieUtils.setCookie(response,CookieUtils.maNV,(String) row[1]);
+            CookieUtils.setCookie(response,CookieUtils.maNV,maNV);
+            //CookieUtils.setCookie(response,CookieUtils.maNV,maNV);
             CookieUtils.setCookie(response,CookieUtils.tenNV, (String) row[2]);
             CookieUtils.setCookie(response,CookieUtils.vaiTro,(String) row[3]);
+            CookieUtils.setCookie(response,CookieUtils.chiNhanh,(String) row[4]);
+            CookieUtils.setCookie(response,CookieUtils.machiNhanh,(String) row[5]);
             return "redirect:/";
         } catch (Exception e) {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");

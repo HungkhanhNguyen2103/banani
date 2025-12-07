@@ -47,6 +47,11 @@
         Lưu thông tin
       </button>
 
+      <button type="button" onclick="quaylai()"
+              class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-md transition">
+        Quay lại
+      </button>
+
     </form>
   </div>
 </div>
@@ -67,6 +72,14 @@
 
         select.addEventListener('change', updateDonGia);
       });
+
+       function quaylai(){
+         const url = window.location.href;
+         const parts = url.split("/");
+         const id = parts[5];
+         window.location.href = '/order/detail/' + id;
+        }
+
     </script>
 </div>
 </html>

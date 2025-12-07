@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Hóa đơn</title>
+    <style>
+
+        body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+      }
+      .d-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .left-header, .right-header {
+        width: 48%;
+      }
+      .left-header h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .right-header p {
+        margin: 4px 0;
+        font-size: 14px;
+        text-align: right;
+      }
+      .company-center {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      th, td {
+        border: 1px solid #000;
+        padding: 6px;
+        text-align: center;
+      }
+      th {
+        background-color: #f0f0f0;
+      }
+        @media print{
+            .no-print{
+               display:none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="d-flex">
+    <div class="left-header">
+        <h2>Banani Coffee</h2>
+<!--        <strong>${chiNhanh}</strong><br>-->
+        <p th:text="${chiNhanh}"></p>
+    </div>
+    <div class="right-header">
+        <p style="display:none">Hotline: 0334.594.822</p>
+        <p>Ngày giờ xuất: <span th:text="${dateNow}"></span></p>
+    </div>
+</div>
+
+<div class="company-center">
+    <h3>Hóa đơn bán hàng</h3>
+    <p>Khách hàng: <span th:text="${khachHang}"></span></p>
+</div>
+<form th:object="${dondatDTO}">
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Tên</th>
+            <th>Hình ảnh</th>
+            <th>Đơn giá</th>
+            <th>Số lượng</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        <tr th:if="${#lists.isEmpty(dondatDTO.listSP)}">
+            <td colspan="5" class="text-center text-gray-500">Không có sản phẩm nào.</td>
+        </tr>
+        <tr th:each="item, stat : ${dondatDTO.listSP}" class="odd:bg-white even:bg-gray-50">
+            <td class="border px-4 py-2" th:text="${stat.index + 1}"></td>
+            <td class="border px-4 py-2" th:text="${item.sanPhamDTO.tenSP}"></td>
+            <td class="border px-4 py-2"><img style="width:60px;height:60px" th:src="${item.sanPhamDTO.hinhAnh}"/></td>
+            <td id="giaTien" class="giaTien border px-4 py-2" th:text="${item.sanPhamDTO.donGiaText}"></td>
+            <td class="border px-4 py-2" th:text="${item.soLuong}"></td>
+        </tr>
+        </tbody>
+    </table>
+</form>
+
+<p th:text="${tongTien}"></p>
+<button type="button" onclick="window.location.href ='/'"
+        class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-md transition no-print">
+    Hoàn thành
+</button>
+<div layout:fragment="scripts">
+    <script>
+        setTimeout(() => {
+            window.print();
+        }, 300);
+    </script>
+</div>
+</body>
+</html>

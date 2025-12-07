@@ -30,6 +30,7 @@ public class SanPhamController {
     public String product(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var listSP = sanPhamRepository.findAllSanPham();
         var listResult = new ArrayList<SanPhamDTO>(){};
@@ -59,6 +60,7 @@ public class SanPhamController {
     public String create(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var resultInfo = sanPhamRepository.findAllLoaiSanPham();
         var listLoatSP = new ArrayList<LoaiSanPhamDTO>();
@@ -79,6 +81,7 @@ public class SanPhamController {
     public String edit(@PathVariable("id") String id, Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var resultInfo = sanPhamRepository.findAllLoaiSanPham();
         var listLoatSP = new ArrayList<LoaiSanPhamDTO>();
@@ -109,6 +112,7 @@ public class SanPhamController {
     public String editProduct(Model model, HttpServletRequest request, SanPhamDTO sanPhamDTO) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         sanPhamRepository.update(sanPhamDTO.getMaSP(),sanPhamDTO.getTenSP(),sanPhamDTO.getMaLSP(),sanPhamDTO.getDonGia(),sanPhamDTO.getDonviTinh(),sanPhamDTO.getTrangThai(),sanPhamDTO.getHinhAnh());
         return "redirect:/product";
@@ -124,6 +128,7 @@ public class SanPhamController {
     public String createProduct(Model model, HttpServletRequest request, SanPhamDTO sanPhamDTO) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         sanPhamDTO.setMaSP(Helpers.generateId());
         sanPhamRepository.insert(sanPhamDTO.getMaSP(),sanPhamDTO.getTenSP(),sanPhamDTO.getMaLSP(),sanPhamDTO.getDonGia(),sanPhamDTO.getDonviTinh(),sanPhamDTO.getTrangThai(),sanPhamDTO.getHinhAnh());

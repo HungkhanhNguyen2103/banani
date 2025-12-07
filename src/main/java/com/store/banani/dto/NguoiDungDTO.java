@@ -9,6 +9,7 @@ public class NguoiDungDTO {
     private String email;
     private String vaiTro;
     private String maTaiKhoan;
+    private String maTaiKhoanDisplay;
     private String matKhau;
     private String maCN;
 
@@ -90,5 +91,13 @@ public class NguoiDungDTO {
 
     public void setMaCN(String maCN) {
         this.maCN = maCN;
+    }
+
+    public String getMaTaiKhoanDisplay() {
+        return maTaiKhoanDisplay;
+    }
+
+    public void setMaTaiKhoanDisplay(String maTaiKhoanDisplay) {
+        this.maTaiKhoanDisplay = maTaiKhoanDisplay;
     }
 }

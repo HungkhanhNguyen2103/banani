@@ -37,6 +37,7 @@ public class NguoiDungController {
     public String user(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         var result = repo.findAllUser();
         var listUser = new ArrayList<NguoiDungDTO>(){};
@@ -61,7 +62,7 @@ public class NguoiDungController {
     public String createUser(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
-
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var chiNhanhs = chinhanhRepo.findAllChiNhanh();
         var listCN = new ArrayList<ChiNhanhDTO>(){};
@@ -82,16 +83,17 @@ public class NguoiDungController {
 
     @GetMapping("/user/edit/{id}")
     public String editUser(@PathVariable("id") String id, Model model, HttpServletRequest request) {
-
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var resultInfo = nhanvienRepo.getNhanVien(id);
         Object[] result = resultInfo.get(0);
         var nv = new NguoiDungDTO();
-        nv.setMaNV((String) result[0]);
+        var maNVDb = (String) result[0];
+        nv.setMaNV(maNVDb);
         nv.setTenNV((String) result[1]);
         nv.setGioiTinh((String) result[2]);
         nv.setNgaySinh(formatter.format((Date) result[3]));
@@ -115,6 +117,7 @@ public class NguoiDungController {
 
         model.addAttribute("chinhanhs", listCN);
         model.addAttribute("nguoiDungDTO", nv);
+
         return "nguoidung/edit";
     }
 
@@ -122,6 +125,7 @@ public class NguoiDungController {
     public String createUserModel(Model model,HttpServletRequest request ,@ModelAttribute("nguoiDungDTO") NguoiDungDTO nguoiDungDTO) throws ParseException {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         model.addAttribute("nguoiDungDTO", nguoiDungDTO);
         var nhanvien = new NHANVIEN();
@@ -160,11 +164,13 @@ public class NguoiDungController {
 
     @PostMapping("/user/edit")
     public String editUser(Model model, HttpServletRequest request,NguoiDungDTO nguoiDungDTO) throws ParseException {
-
+        var username = CookieUtils.getCookieValue(request,CookieUtils.username);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
+        var maCN = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         model.addAttribute("nguoiDungDTO", nguoiDungDTO);
 
         var chiNhanhs = chinhanhRepo.findAllChiNhanh();
@@ -176,6 +182,8 @@ public class NguoiDungController {
             cn.setDiaChi((String) item[2]);
             listCN.add(cn);
         }
+
+        if(!vaiTro.equals("Admin")) nguoiDungDTO.setMaCN(maCN);
 
         var users = repo.getUser(nguoiDungDTO.getMaTaiKhoan(),nguoiDungDTO.getMaNV());
         if(users.size() > 0){
@@ -197,6 +205,8 @@ public class NguoiDungController {
                 ,nguoiDungDTO.getGioiTinh(),ns,nguoiDungDTO.getSdtNV(),
                 nguoiDungDTO.getEmail(),nguoiDungDTO.getVaiTro(),nguoiDungDTO.getMaCN());
 
+        var maNVDb = nguoiDungDTO.getMaTaiKhoan();
+        if(maNVDb.equals(username)) return "redirect:/account/logout";
         return "redirect:/user";
     }
 }

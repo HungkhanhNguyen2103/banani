@@ -41,11 +41,13 @@
             <div class="row">
                 <div class="col-6">
                     <label class="block mb-1 font-medium text-gray-700">Chức vụ</label>
-                    <select required th:field="*{vaiTro}" class="w-full border px-4 py-2 rounded-md">
+                    <select required th:field="*{vaiTro}" id="vaiTro" class="w-full border px-4 py-2 rounded-md">
                         <option value="Phục vụ">Phục vụ</option>
                         <option value="Thu ngân">Thu ngân</option>
                         <option value="Pha chế">Pha chế</option>
                         <option value="Quản lý">Quản lý</option>
+                        <option th:if="${vaiTro == 'Admin'}" value="Admin">Admin</option>
+<!--                        <option value="Admin">Admin</option>-->
                     </select>
                 </div>
 
@@ -71,7 +73,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div th:if="${vaiTro == 'Admin'}" class="row" id="chiNhanhDiv">
                 <div class="col-12">
                     <label class="block mb-1 font-medium text-gray-700">Chi nhánh</label>
                     <select required th:field="*{maCN}" class="w-full border px-4 py-2 rounded-md">
@@ -93,7 +95,15 @@
         </form>
     </div>
 </div>
-
+<div layout:fragment="scripts">
+    <script>
+        document.getElementById("vaiTro").onchange = function () {
+            let value = this.value;
+            if(value === "Admin") document.getElementById("chiNhanhDiv").classList.add("d-none");
+            else document.getElementById("chiNhanhDiv").classList.remove("d-none");
+        };
+    </script>
+</div>
 <!--<div layout:fragment="scripts">-->
 <!--    <script>-->
 <!--    </script>-->

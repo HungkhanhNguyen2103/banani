@@ -33,6 +33,7 @@ public class NguyenLIeuController {
     public String index(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var listSP = repository.findAllItem();
         var listResult = new ArrayList<NguyenLieuDTO>(){};
@@ -54,6 +55,7 @@ public class NguyenLIeuController {
     public String create(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var resultInfo = chinhanhRepo.findAllChiNhanh();
         var chinhanhs = new ArrayList<ChiNhanhDTO>();
@@ -76,6 +78,7 @@ public class NguyenLIeuController {
     public String edit(@PathVariable("id") String id, Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var resultInfo = chinhanhRepo.findAllChiNhanh();
         var chinhanhs = new ArrayList<ChiNhanhDTO>();
@@ -108,6 +111,7 @@ public class NguyenLIeuController {
     public String editModel(Model model, HttpServletRequest request, NguyenLieuDTO nguyenLieuDTO) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         repository.update(nguyenLieuDTO.getTenNL(),nguyenLieuDTO.getDonViTinh(),nguyenLieuDTO.getTonKho(),nguyenLieuDTO.getMaCN(),nguyenLieuDTO.getMaNL());
         return "redirect:/material";
@@ -123,6 +127,7 @@ public class NguyenLIeuController {
     public String createModel(Model model, HttpServletRequest request, NguyenLieuDTO nguyenLieuDTO) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         repository.insert(Helpers.generateId(),nguyenLieuDTO.getTenNL(),nguyenLieuDTO.getDonViTinh(),nguyenLieuDTO.getTonKho(),nguyenLieuDTO.getMaCN());
         return "redirect:/material";

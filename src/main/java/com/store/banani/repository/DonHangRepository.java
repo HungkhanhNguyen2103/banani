@@ -18,9 +18,13 @@ public interface DonHangRepository extends JpaRepository<DONHANG, String> {
             "inner join BAN b on b.MaBAN = dd.MaBAN",nativeQuery = true)
     List<Object[]> getAllDonDat();
 
+    @Query(value = "select * from DONDAT dd " +
+            "where dd.MaBAN = :maBAN and dd.TrangThai in (N'Đang xử lý') order by dd.ThoiGianDat desc",nativeQuery = true)
+    List<Object[]> getDonDatByBan(@Param("maBAN") String maBAN);
+
 
     @Query(value = "select * from DONDAT dd " +
-            "inner join KHACHHANG kh on dd.MaKH = kh.MaKH " +
+            "left join KHACHHANG kh on dd.MaKH = kh.MaKH " +
             "inner join BAN b on b.MaBAN = dd.MaBAN " +
             "left join CT_DONDAT ct on dd.MaDD = ct.MaDD " +
             "left join SANPHAM sp on ct.MaSP = sp.MaSP " +
@@ -96,6 +100,16 @@ public interface DonHangRepository extends JpaRepository<DONHANG, String> {
             nativeQuery = true)
     void editDonDat(@Param("trangThai") String trangThai,
                        @Param("maDD") String maDD);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = " UPDATE DONDAT SET TrangThai = :trangThai,MaKH = :maKH WHERE MaDD = :maDD",
+            nativeQuery = true)
+    void editDonDat2(
+                    @Param("trangThai") String trangThai,
+                    @Param("maKH") String maKH,
+                    @Param("maDD") String maDD);
 
 
 

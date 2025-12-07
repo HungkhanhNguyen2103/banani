@@ -15,8 +15,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<TAIKHOAN, String> {
-    @Query(value = "SELECT t.MaTaiKhoan, t.MaNV,nv.TenNV,nv.VaiTro FROM TAIKHOAN as t inner join " +
+    @Query(value = "SELECT t.MaTaiKhoan, t.MaNV,nv.TenNV,nv.VaiTro,cn.DiaChi,cn.MaCN FROM TAIKHOAN as t inner join " +
             "NHANVIEN as nv on t.MaNV = nv.MaNV " +
+            " inner join CHINHANH as cn on nv.MaCN = cn.MaCN " +
             " WHERE MaTaiKhoan = :maTaiKhoan AND MatKhau = :matKhau",nativeQuery = true)
     Object[] findByCredentials(@Param("maTaiKhoan") String maTaiKhoan, @Param("matKhau") String matKhau);
 

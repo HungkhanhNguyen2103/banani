@@ -13,12 +13,19 @@ import java.util.List;
 
 @Repository
 public interface BanRepository extends JpaRepository<BAN, String> {
-    @Query(value = "select * from BAN b inner join CHINHANH c on b.MaCN = c.MaCN;",nativeQuery = true)
-    List<Object[]> findAllItem();
+    @Query(value = "select * from BAN b inner join CHINHANH c on b.MaCN = c.MaCN WHERE c.MaCN = :maCN;",nativeQuery = true)
+    List<Object[]> findAllItem(@Param("maCN") String maCN);
 
     @Query(value = "select * from BAN b inner join CHINHANH c on b.MaCN = c.MaCN where b.MaBAN = :maBan",nativeQuery = true)
     List<Object[]> findItem(
             @Param("maBan") String maBan
+    );
+
+    @Query(value = "select * from BAN b where b.MaCN = :maCN and b.TenBAN = :tenBan and b.KhuVuc = :khuVuc",nativeQuery = true)
+    List<Object[]> findItem2(
+            @Param("tenBan") String tenBan,
+            @Param("khuVuc") String khuVuc,
+            @Param("maCN") String maCN
     );
 
     @Modifying
@@ -27,5 +34,17 @@ public interface BanRepository extends JpaRepository<BAN, String> {
     void update(
             @Param("trangThai") String trangThai,
             @Param("maBan") String maBan
+    );
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into BAN values (:maBan,:tenBan,:khuVuc,:TrangThai,:maCN)",nativeQuery = true)
+    void insert(
+            @Param("maBan") String maBan,
+            @Param("tenBan") String tenBan,
+            @Param("khuVuc") String khuVuc,
+            @Param("TrangThai") String TrangThai,
+            @Param("maCN") String maCN
     );
 }

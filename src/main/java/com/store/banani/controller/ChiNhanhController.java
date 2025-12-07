@@ -32,6 +32,7 @@ public class ChiNhanhController {
 
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var list = repository.findAllChiNhanh();
         var chinhanhs = new ArrayList<ChiNhanhDTO>();
@@ -54,6 +55,7 @@ public class ChiNhanhController {
     public String create(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         model.addAttribute("chinhanhDTO", new ChiNhanhDTO());
         return "chinhanh/create";
     }
@@ -62,6 +64,7 @@ public class ChiNhanhController {
     public String createModel(Model model,HttpServletRequest request ,@ModelAttribute("chinhanhDTO") ChiNhanhDTO chiNhanhDTO){
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         model.addAttribute("chiNhanhDTO", chiNhanhDTO);
 
         repository.insert(Helpers.generateId(),chiNhanhDTO.getTenCN(),chiNhanhDTO.getDiaChi(),chiNhanhDTO.getSdt(),chiNhanhDTO.getEmailCN(),chiNhanhDTO.getTrangThai());
@@ -72,6 +75,7 @@ public class ChiNhanhController {
     public String edit(@PathVariable("id") String id, Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var result = repository.get(id).get(0);
         var cn = new ChiNhanhDTO();
@@ -90,6 +94,7 @@ public class ChiNhanhController {
     public String editModel(Model model, HttpServletRequest request,ChiNhanhDTO chiNhanhDTO) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         repository.update(chiNhanhDTO.getTenCN(),chiNhanhDTO.getDiaChi(),chiNhanhDTO.getSdt(),chiNhanhDTO.getEmailCN(),chiNhanhDTO.getMaCN(),chiNhanhDTO.getTrangThai());
 

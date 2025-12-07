@@ -12,8 +12,11 @@ public class CookieUtils {
     public static String loggedInUser = "loggedInUser";
     public static String username = "username";
     public static String maNV = "maNV";
+    //public static String maNV2 = "maNV2";
     public static String tenNV = "tenNV";
-    public static String vaiTro = "maNV";
+    public static String vaiTro = "vaiTro";
+    public static String chiNhanh = "chiNhanh";
+    public static String machiNhanh = "machiNhanh";
 
     public static void setCookie(HttpServletResponse response, String name, String value) {
         Cookie cookie = new Cookie(name, URLEncoder.encode(value, StandardCharsets.UTF_8));

@@ -5,6 +5,7 @@ import com.store.banani.config.Helpers;
 import com.store.banani.dto.*;
 import com.store.banani.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +17,10 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,21 +31,24 @@ public class DonHangController {
     private final BanRepository banRepository;
     private final NhanVienRepository nhanVienRepository;
     private final ChiNhanhRepository chiNhanhRepository;
+    private final KhachHangRepository khachHangRepository;
 
     public DonHangController(DonHangRepository repository,SanPhamRepository sanPhamRepository,
                              BanRepository banRepository,NhanVienRepository nhanVienRepository,
-                             ChiNhanhRepository chiNhanhRepository){
+                             ChiNhanhRepository chiNhanhRepository, KhachHangRepository khachHangRepository){
         this.repository = repository;
         this.sanPhamRepository = sanPhamRepository;
         this.banRepository = banRepository;
         this.nhanVienRepository = nhanVienRepository;
         this.chiNhanhRepository = chiNhanhRepository;
+        this.khachHangRepository = khachHangRepository;
     }
 
     @GetMapping("/order")
     public String order(Model model, HttpServletRequest request) throws ParseException {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -69,17 +75,20 @@ public class DonHangController {
     public String create(Model model, HttpServletRequest request){
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
-        var listKH = repository.getListKH();
-        var listKH1 = new ArrayList<KhachHangDTO>();
-        for (var kh : listKH){
-            var item = new KhachHangDTO();
-            item.setMaKH((String) kh[0]);
-            item.setTenKH((String) kh[1]);
-            listKH1.add(item);
-        }
+        var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
 
-        var result = banRepository.findAllItem();
+//        var listKH = repository.getListKH();
+//        var listKH1 = new ArrayList<KhachHangDTO>();
+//        for (var kh : listKH){
+//            var item = new KhachHangDTO();
+//            item.setMaKH((String) kh[0]);
+//            item.setTenKH((String) kh[1]);
+//            listKH1.add(item);
+//        }
+
+        var result = banRepository.findAllItem(maChiNhanh);
         var listBan = new ArrayList<BanDTO>();
         for (var item : result){
             var b = new BanDTO();
@@ -92,7 +101,9 @@ public class DonHangController {
             listBan.add(b);
         }
 
-        var list = nhanVienRepository.getAllNhanVien();
+        //var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
+
+        var list = nhanVienRepository.getAllNhanVien(maChiNhanh);
         var resultNV = new ArrayList<NhanVienDTO>();
         for (var i : list){
             var nhanvien = new NhanVienDTO();
@@ -104,27 +115,58 @@ public class DonHangController {
             resultNV.add(nhanvien);
         }
 
+        var donDat = new DonDatDTO();
+        LocalDateTime now = LocalDateTime.now();
 
-        model.addAttribute("listKH",listKH1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        String formattedDate = now.format(formatter);
+        donDat.setThoiGianDat(formattedDate);
+        //model.addAttribute("listKH",listKH1);
         model.addAttribute("listBan",listBan);
         model.addAttribute("listNV",resultNV);
-        model.addAttribute("dondatDTO", new DonDatDTO());
+        model.addAttribute("dondatDTO", donDat);
+        model.addAttribute("hoaDonDTO",new HoaDonDTO());
+        model.addAttribute("isPayment",false);
 
         return "dondat/create";
     }
 
     @PostMapping("/order/create")
     public String create(Model model, HttpServletRequest request,DonDatDTO donDatDTO){
+        donDatDTO.setMaNV(CookieUtils.getCookieValue(request,CookieUtils.maNV));
         donDatDTO.setMaDD(Helpers.generateId());
-        repository.createDondat(donDatDTO.getMaDD(),donDatDTO.getMaKH(),donDatDTO.getMaNV(),donDatDTO.getMaBan(),donDatDTO.getTrangThai());
+        donDatDTO.setTrangThai("Đang xử lý");
+
+        var maKH = Helpers.generateId();
+        khachHangRepository.insert(maKH,donDatDTO.getTenKH(),donDatDTO.getSDT(),donDatDTO.getEmailKH());
+        donDatDTO.setMaKH(maKH);
+        repository.createDondat(donDatDTO.getMaDD(),maKH,donDatDTO.getMaNV(),donDatDTO.getMaBan(),donDatDTO.getTrangThai());
         String url = "redirect:/order/detail/" + donDatDTO.getMaDD();
+
+        repository.editDonDat(donDatDTO.getTrangThai(),donDatDTO.getMaDD());
         return url;
+    }
+
+    @PostMapping("/order/getKH")
+    public ResponseEntity<KhachHangDTO> getKhachHang(@RequestParam String sdt){
+        var found = khachHangRepository.getKhachHang(sdt);
+        if(found.isEmpty()) return ResponseEntity.ok(null);
+        var kh = found.get(0);
+        var khDTO = new KhachHangDTO();
+        khDTO.setTenKH((String) kh[1]);
+        khDTO.setSdtKH(sdt);
+        khDTO.setMaKH((String) kh[0]);
+        khDTO.setEmailKH((String) kh[3]);
+        return ResponseEntity.ok(khDTO);
     }
 
     @GetMapping("/order/detail/{id}")
     public String detail(@PathVariable("id") String id, Model model, HttpServletRequest request){
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
+
+        var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -137,6 +179,7 @@ public class DonHangController {
         dd.setMaKH((String) i[2]);
         dd.setTenKH((String) i[7]);
         dd.setSDT((String) i[8]);
+        dd.setEmailKH((String) i[9]);
         dd.setMaBan((String) i[4]);
         dd.setTrangThai((String) i[5]);
 
@@ -170,6 +213,7 @@ public class DonHangController {
             listSP.add(item);
         }
         dd.setListSP(listSP);
+        dd.setTongTien2(tongTien);
 
         var r1 = repository.getPayment(dd.getMaDD());
         var isBoolean = false;
@@ -180,7 +224,21 @@ public class DonHangController {
         model.addAttribute("maDD",dd.getMaDD());
         model.addAttribute("dondatDTO", dd);
 
-        var list = nhanVienRepository.getAllNhanVien();
+        var result = banRepository.findAllItem(maChiNhanh);
+        var listBan = new ArrayList<BanDTO>();
+        for (var item : result){
+            var b = new BanDTO();
+            b.setMaBAN((String) item[0]);
+            b.setTenBAN((String) item[1]);
+            b.setKhuVuc((String) item[2]);
+            b.setTrangThai((String) item[3]);
+            b.setMaCN((String) item[4]);
+            b.setChinhanh((String) item[7]);
+            listBan.add(b);
+        }
+        model.addAttribute("listBan",listBan);
+
+        var list = nhanVienRepository.getAllNhanVien(maChiNhanh);
         var resultNV = new ArrayList<NhanVienDTO>();
         for (var i1 : list){
             var nhanvien = new NhanVienDTO();
@@ -211,6 +269,7 @@ public class DonHangController {
     public String payment(Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         var result = repository.getAllHoaDon();
         var list = new ArrayList<HoaDonDTO>();
@@ -231,6 +290,7 @@ public class DonHangController {
         return "payment";
     }
 
+
     @PostMapping("/order/detail/createctSP")
     public String createctSP(Model model, HttpServletRequest request, CTDonDatDTO donDatDTO){
 
@@ -250,6 +310,7 @@ public class DonHangController {
     public String statisticalFilter(@PathVariable("maCN") String maCN, @RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate, Model model, HttpServletRequest request) {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var result = chiNhanhRepository.findAllChiNhanh();
 
@@ -345,8 +406,15 @@ public class DonHangController {
 
     @GetMapping("/statistical/{maCN}")
     public String statistical(@PathVariable("maCN") String maCN, Model model, HttpServletRequest request) {
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
+
+        var maCn = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
+        if(!vaiTro.equals("Admin") && maCN.equals("0")){
+            return "redirect:/statistical/" + maCn;
+        }
 
         var result = chiNhanhRepository.findAllChiNhanh();
 
@@ -376,8 +444,8 @@ public class DonHangController {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDateNow = currentDate.format(formatter1);
-        model.addAttribute("startDate",formattedDateNow);
-        model.addAttribute("endDate",formattedDateNow);
+        model.addAttribute("startDate","yyyy-MM-dd");
+        model.addAttribute("endDate","yyyy-MM-dd");
 
         model.addAttribute("tenCN",tenCn);
         model.addAttribute("diaChi",dcHi);
@@ -420,7 +488,7 @@ public class DonHangController {
         }
 
         var listInHoaDon = new ArrayList<BaoCaoDTO>();
-        var result1 = repository.inHoaDonByDate(maCN,formattedDateNow,formattedDateNow);
+        var result1 = repository.inHoaDon(maCN);
         if(maCN.equals("0")) result1 = repository.inHoaDonAllByDate(formattedDateNow,formattedDateNow);
         for (var i : result1){
             var ite1 = new BaoCaoDTO();
@@ -448,6 +516,7 @@ public class DonHangController {
     public String createSP(@PathVariable("id") String id, Model model, HttpServletRequest request){
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var listSP = sanPhamRepository.findAllSanPham();
         var listResultSP = new ArrayList<SanPhamDTO>(){};
@@ -477,10 +546,96 @@ public class DonHangController {
         return "dondat/createSP";
     }
 
+
     @PostMapping("/order/edit")
-    public String editSP( Model model, DonDatDTO dondatDTO){
-        repository.editDonDat(dondatDTO.getTrangThai(),dondatDTO.getMaDD());
+    public String editSP( Model model, DonDatDTO dondatDTO,HttpServletRequest request){
+        dondatDTO.setMaNV(CookieUtils.getCookieValue(request,CookieUtils.maNV));
+        if(dondatDTO.getMaKH().isEmpty()){
+            dondatDTO.setMaKH(Helpers.generateId());
+            khachHangRepository.insert(dondatDTO.getMaKH(),dondatDTO.getTenKH(),dondatDTO.getSDT(),dondatDTO.getEmailKH());
+        }
+        else{
+            khachHangRepository.update(dondatDTO.getMaKH(),dondatDTO.getTenKH(),dondatDTO.getSDT(),dondatDTO.getEmailKH());
+        }
+
+        repository.editDonDat2(dondatDTO.getTrangThai(),dondatDTO.getMaKH(),dondatDTO.getMaDD());
+
+        if(dondatDTO.getTrangThai().equals("Hoàn thành")){
+            var idHoaHon = Helpers.generateId();
+            repository.payment(idHoaHon,dondatDTO.getMaDD(),dondatDTO.getTongTien2(),dondatDTO.getThanhToan(),dondatDTO.getMaNV());
+            banRepository.update("Trống",dondatDTO.getMaBan());
+        }
+
+        if(dondatDTO.getTrangThai().equals("Đang xử lý")){
+            return "redirect:/table";
+        }
+
+        if(dondatDTO.isInBill()){
+            return "redirect:/order/bill/" + dondatDTO.getMaDD();
+        }
+
         return "redirect:/order";
+    }
+
+    @GetMapping("/order/bill/{id}")
+    public String inBill(@PathVariable("id") String id,Model model, HttpServletRequest request){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
+        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
+        model.addAttribute("dateNow",formatter.format(new Date()));
+
+        var data = repository.chitietDonDat(id);
+        var i = data.get(0);
+        var dd = new DonDatDTO();
+        dd.setMaDD((String) i[0]);
+        String ns = formatter.format(i[1]);
+        dd.setThoiGianDat(ns);
+        dd.setMaKH((String) i[2]);
+        dd.setTenKH((String) i[7]);
+        dd.setSDT((String) i[8]);
+        dd.setEmailKH((String) i[9]);
+        dd.setMaBan((String) i[4]);
+        dd.setTrangThai((String) i[5]);
+
+        float tongTien = 0;
+        var listSP = new ArrayList<CTDonDatDTO>();
+        for (var c : data){
+            if(c[17] == null) continue;
+            var item = new CTDonDatDTO();
+            item.setMaDD((String) c[0]);
+            item.setMaSP((String) c[17]);
+            if (c[18] != null) {
+                item.setSoLuong((int) c[18]);
+            }
+
+            item.setGhiChu((String) c[19]);
+
+            var itemSp = new SanPhamDTO();
+            itemSp.setTenSP((String) c[21]);
+            itemSp.setMaLSP((String) c[22]);
+            if(c[23] != null){
+                BigDecimal big = (BigDecimal) c[23];
+                itemSp.setDonGia(big.floatValue());
+                itemSp.setDonGiaText(Helpers.convertMoney(itemSp.getDonGia()));
+                tongTien += (float) (itemSp.getDonGia() * item.getSoLuong());
+            }
+
+            itemSp.setDonviTinh((String) c[24]);
+            itemSp.setHinhAnh((String) c[26]);
+            item.setSanPhamDTO(itemSp);
+
+            listSP.add(item);
+        }
+        dd.setListSP(listSP);
+        dd.setTongTien2(tongTien);
+
+        model.addAttribute("tongTien","Tổng tiền: " + Helpers.convertMoney(tongTien));
+        model.addAttribute("maDD",dd.getMaDD());
+        model.addAttribute("dondatDTO", dd);
+        model.addAttribute("khachHang", dd.getTenKH());
+
+        return "dondat/bill";
     }
 
     @GetMapping("/order/detail/{id}/removeSP/{maSP}")
@@ -494,6 +649,7 @@ public class DonHangController {
     public String editSP(@PathVariable("id") String id,@PathVariable("maSP") String maSP, Model model, HttpServletRequest request){
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var listSP = sanPhamRepository.findAllSanPham();
         var listResultSP = new ArrayList<SanPhamDTO>(){};
