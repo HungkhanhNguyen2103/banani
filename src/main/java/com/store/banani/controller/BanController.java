@@ -31,17 +31,21 @@ public class BanController {
     @GetMapping("/table")
     public String table(Model model, HttpServletRequest request) {
 
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro",vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
+        if(vaiTro.equals("Admin")) maChiNhanh = vaiTro;
         var result = repository.findAllItem(maChiNhanh);
         var listResult = new ArrayList<BanDTO>();
         for (var item : result){
             var b = new BanDTO();
+            var khuVuc = (String) item[2];
+            if(vaiTro.equals("Admin")) khuVuc += " - " + (String) item[7];
             b.setMaBAN((String) item[0]);
             b.setTenBAN((String) item[1]);
-            b.setKhuVuc((String) item[2]);
+            b.setKhuVuc(khuVuc);
             b.setTrangThai((String) item[3]);
             b.setMaCN((String) item[4]);
             b.setChinhanh((String) item[7]);
@@ -119,13 +123,15 @@ public class BanController {
 
     @PostMapping("/table/create")
     public String createBan(Model model, HttpServletRequest request, BanDTO banDTO) {
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
+
         banDTO.setMaCN(CookieUtils.getCookieValue(request,CookieUtils.machiNhanh));
         banDTO.setTrangThai("Trống");
         banDTO.setMaBAN(Helpers.generateId());
-        var found = repository.findItem2("Bàn " + banDTO.getTenBAN(), banDTO.getKhuVuc(),banDTO.getMaCN());
+        var found = repository.findItem2("Bàn " + banDTO.getTenBAN(), banDTO.getKhuVuc(),vaiTro.equals("Admin") ? vaiTro : banDTO.getMaCN());
         if (!found.isEmpty()) {
             model.addAttribute("error", "Bàn hoặc khu vực đã tồn tại");
             return "ban/create";

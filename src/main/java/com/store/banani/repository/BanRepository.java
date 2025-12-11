@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface BanRepository extends JpaRepository<BAN, String> {
-    @Query(value = "select * from BAN b inner join CHINHANH c on b.MaCN = c.MaCN WHERE c.MaCN = :maCN;",nativeQuery = true)
+    @Query(value = "select * from BAN b inner join CHINHANH c on b.MaCN = c.MaCN WHERE :maCN = 'Admin' OR c.MaCN = :maCN;",nativeQuery = true)
     List<Object[]> findAllItem(@Param("maCN") String maCN);
 
     @Query(value = "select * from BAN b inner join CHINHANH c on b.MaCN = c.MaCN where b.MaBAN = :maBan",nativeQuery = true)
@@ -21,7 +21,7 @@ public interface BanRepository extends JpaRepository<BAN, String> {
             @Param("maBan") String maBan
     );
 
-    @Query(value = "select * from BAN b where b.MaCN = :maCN and b.TenBAN = :tenBan and b.KhuVuc = :khuVuc",nativeQuery = true)
+    @Query(value = "select * from BAN b where ( :maCN = 'Admin' OR b.MaCN = :maCN ) and b.TenBAN = :tenBan and b.KhuVuc = :khuVuc",nativeQuery = true)
     List<Object[]> findItem2(
             @Param("tenBan") String tenBan,
             @Param("khuVuc") String khuVuc,

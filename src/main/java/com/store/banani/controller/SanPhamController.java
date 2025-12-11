@@ -26,8 +26,9 @@ public class SanPhamController {
 
     @GetMapping("/product")
     public String product(Model model, HttpServletRequest request) {
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var listSP = sanPhamRepository.findAllSanPham();
@@ -169,12 +170,14 @@ public class SanPhamController {
 
     @GetMapping("/product/createNL/{id}")
     public String createNL(@PathVariable("id") String id,Model model, HttpServletRequest request) {
+
+        var vaiTro =  CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         var maCN = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
 
-        var result = sanPhamRepository.findAllItemNL(maCN);
+        var result = sanPhamRepository.findAllItemNL(vaiTro.equals("Admin") ? vaiTro : maCN);
         var list = new ArrayList<NguyenLieuDTO>();
         for (var i : result){
             var item = new NguyenLieuDTO();
@@ -195,12 +198,13 @@ public class SanPhamController {
 
     @GetMapping("/product/editNL/{maSP}/{maCTSP}")
     public String editNL(@PathVariable("maSP") String maSP,@PathVariable("maCTSP") String maCTSP,Model model, HttpServletRequest request) {
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
         var maCN = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
 
-        var result = sanPhamRepository.findAllItemNL(maCN);
+        var result = sanPhamRepository.findAllItemNL(vaiTro.equals("Admin") ? vaiTro : maCN);
         var list = new ArrayList<NguyenLieuDTO>();
         for (var i : result){
             var item = new NguyenLieuDTO();

@@ -15,13 +15,13 @@ import java.util.List;
 public interface NguyenLieuRepository extends JpaRepository<NGUYENLIEU, String> {
 
 
-    @Query(value = "SELECT * FROM NGUYENLIEU ",nativeQuery = true)
-    List<Object[]> findAllItem();
+    @Query(value = "SELECT * FROM NGUYENLIEU WHERE :maCN = 'Admin' OR  MaCN = :maCN ",nativeQuery = true)
+    List<Object[]> findAllItem(@Param("maCN") String maCN);
 
     @Query(value = "SELECT pn.MaPN, CONVERT(varchar(10), pn.NgayNhap, 105) AS NgayNhapFormatted, pn.MaNV,nv.TenNV, SUM(ct.SoLuong) as TongSoLuong, CAST(SUM(ct.SoLuong * ct.DonGia) AS FLOAT) AS TongGia FROM PHIEUNHAPKHO pn " +
             "INNER JOIN CT_PHIEUNHAP ct ON pn.MaPN = ct.MaPN " +
             "INNER JOIN NHANVIEN nv ON pn.MaNV = nv.MaNV " +
-            "WHERE pn.MaCN = :maCN " +
+            "WHERE pn.MaCN = :maCN OR :maCN = 'Admin' " +
             "GROUP BY pn.MaPN,pn.NgayNhap, pn.MaNV,nv.TenNV",nativeQuery = true)
     List<Object[]> findAllItemNhapKho(@Param("maCN") String maCN);
 

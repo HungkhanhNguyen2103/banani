@@ -31,11 +31,15 @@ public class NguyenLIeuController {
 
     @GetMapping("/material")
     public String index(Model model, HttpServletRequest request) {
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
-        var listSP = repository.findAllItem();
+        var maCN = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
+        if(vaiTro.equals("Admin")) maCN = vaiTro;
+
+        var listSP = repository.findAllItem(maCN);
         var listResult = new ArrayList<NguyenLieuDTO>(){};
         for(var item : listSP){
             var sp = new NguyenLieuDTO();
@@ -53,11 +57,13 @@ public class NguyenLIeuController {
 
     @GetMapping("/material/nhapkho")
     public String nhapkho(Model model, HttpServletRequest request) {
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var maCN = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
+        if(vaiTro.equals("Admin")) maCN = vaiTro;
 
         var list = repository.findAllItemNhapKho(maCN);
 

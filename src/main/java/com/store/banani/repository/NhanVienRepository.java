@@ -65,7 +65,7 @@ public interface NhanVienRepository extends JpaRepository<NHANVIEN, String> {
                         @Param("vaiTro") String vaiTro,
                         @Param("maCN") String maCN);
 
-    @Query(value = "select * from NHANVIEN WHERE MaCN = :maCN ",
+    @Query(value = "select * from NHANVIEN WHERE MaCN = :maCN OR :maCN = 'Admin' ",
             nativeQuery = true)
     List<Object[]> getAllNhanVien(@Param("maCN") String maCN);
 

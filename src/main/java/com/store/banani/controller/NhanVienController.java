@@ -145,13 +145,13 @@ public class NhanVienController {
 
             switch (tenCa) {
                 case "Ca sáng":
-                    dto.getCaSang().add(tenNV + "(" + maNV + ")");
+                    dto.getCaSang().add(tenNV + " (" + maNV + ")");
                     break;
                 case "Ca chiều":
-                    dto.getCaChieu().add(tenNV + "(" + maNV + ")");
+                    dto.getCaChieu().add(tenNV + " (" + maNV + ")");
                     break;
                 case "Ca tối":
-                    dto.getCaToi().add(tenNV + "(" + maNV + ")");
+                    dto.getCaToi().add(tenNV + " (" + maNV + ")");
                     break;
             }
         }

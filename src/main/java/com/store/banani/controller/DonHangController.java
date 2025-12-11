@@ -75,8 +75,9 @@ public class DonHangController {
 
     @GetMapping("/order/create")
     public String create(Model model, HttpServletRequest request){
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
@@ -90,7 +91,7 @@ public class DonHangController {
 //            listKH1.add(item);
 //        }
 
-        var result = banRepository.findAllItem(maChiNhanh);
+        var result = banRepository.findAllItem(vaiTro.equals("Admin") ? vaiTro : maChiNhanh);
         var listBan = new ArrayList<BanDTO>();
         for (var item : result){
             var b = new BanDTO();
@@ -178,8 +179,9 @@ public class DonHangController {
 
     @GetMapping("/order/detail/{id}")
     public String detail(@PathVariable("id") String id, Model model, HttpServletRequest request){
+        var vaiTro = CookieUtils.getCookieValue(request,CookieUtils.vaiTro);
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
-        model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
+        model.addAttribute("vaiTro", vaiTro);
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
         var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
@@ -240,7 +242,7 @@ public class DonHangController {
         model.addAttribute("maDD",dd.getMaDD());
         model.addAttribute("dondatDTO", dd);
 
-        var result = banRepository.findAllItem(maChiNhanh);
+        var result = banRepository.findAllItem(vaiTro.equals("Admin") ? vaiTro : maChiNhanh);
         var listBan = new ArrayList<BanDTO>();
         for (var item : result){
             var b = new BanDTO();

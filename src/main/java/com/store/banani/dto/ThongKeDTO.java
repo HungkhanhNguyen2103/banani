@@ -1,8 +1,10 @@
 package com.store.banani.dto;
 
+import com.store.banani.config.Helpers;
+
 public class ThongKeDTO {
     private String label;
-    private float value;
+    private String value;
 
     public String getLabel() {
         return label;
@@ -12,11 +14,11 @@ public class ThongKeDTO {
         this.label = label;
     }
 
-    public float getValue() {
+    public String getValue() {
         return value;
     }
 
     public void setValue(float value) {
-        this.value = value;
+        this.value = Helpers.convertMoney(value);
     }
 }

@@ -19,7 +19,7 @@ public interface SanPhamRepository extends JpaRepository<SANPHAM, String> {
     @Query(value = "select * from LOAISP ",nativeQuery = true)
     List<Object[]> findAllLoaiSanPham();
 
-    @Query(value = "SELECT * FROM NGUYENLIEU WHERE MaCN = :maCN ",nativeQuery = true)
+    @Query(value = "SELECT * FROM NGUYENLIEU WHERE MaCN = :maCN OR :maCN = 'Admin' ",nativeQuery = true)
     List<Object[]> findAllItemNL(@Param("maCN") String maCN);
 
     @Modifying
