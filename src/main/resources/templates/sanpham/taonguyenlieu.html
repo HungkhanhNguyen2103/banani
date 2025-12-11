@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
+    <h2 class="text-xl font-semibold mb-4">Tạo nguyên liệu sản phẩm</h2>
+
+    <div class=" bg-white bg-white mb-4">
+        <form id="orderForm" th:action="@{/product/updateNL}" th:object="${ctSanphamDTO}" method="post" class="space-y-5">
+
+            <div class="row">
+                <input hidden type="text" th:field="*{maCTSP}" />
+                <input hidden type="text" th:field="*{maSP}" />
+                <input hidden type="text" th:field="*{maNLCu}" />
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Nguyên liệu</label>
+                    <select required th:field="*{maNL}" class="w-full border px-4 py-2 rounded-md">
+                        <option th:each="lsp : ${list}"
+                                th:value="${lsp.maNL}"
+                                th:attr="data-tonKho=${lsp.tonKho}"
+                                th:text="${lsp.tenNL}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-6">
+                    <label class="block mb-1 font-medium text-gray-700">Số lượng:</label>
+                    <input required type="number" th:field="*{soLuong}" placeholder="Số lượng"
+                           class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                </div>
+            </div>
+
+
+
+            <button id="paymentButton2" type="submit"
+                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-md transition">
+                Lưu thông tin
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+<!--        document.addEventListener('DOMContentLoaded', function () {-->
+<!--             const select = document.getElementById('maNL');-->
+<!--             const tonKhoText = document.getElementById('idTonKho');-->
+<!--             let tonKhoValue = 0;-->
+
+<!--             function updateNL() {-->
+<!--               const selectedOption = select.options[select.selectedIndex];-->
+<!--               const tonKho = selectedOption.getAttribute('data-tonKho');-->
+<!--               tonKhoText.innerHTML = tonKho || 0;-->
+<!--               tonKhoValue = tonKho;-->
+<!--             }-->
+
+<!--             updateNL();-->
+<!--             select.addEventListener('change', updateNL);-->
+<!--             const paymentButton2 = document.getElementById('paymentButton2');-->
+<!--             const orderForm = document.getElementById('orderForm');-->
+<!--             const soLuong = document.getElementById('soLuong');-->
+<!--             if (paymentButton2) {-->
+<!--                paymentButton2.addEventListener('click', function() {-->
+<!--                    if (tonKhoValue >= Number(soLuong.value) ) {-->
+<!--                        orderForm.submit();-->
+<!--                    } else {-->
+<!--                        alert('Vượt quá số lượng tồn kho');-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+<!--        });-->
+    </script>
+</div>
+</html>

@@ -3,15 +3,10 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{_layout}">
 <div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
-    <h2 class="text-xl font-semibold mb-4">Quản lý nguyên vật liệu</h2>
-
+    <h2 class="text-xl font-semibold mb-4">Quản lý nguyên liệu sản phẩm</h2>
 
     <div class="mb-6">
-        <button onclick="window.location.href ='/material/create'" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</button>
-    </div>
-
-    <div class="mb-6 col-3">
-        <button onclick="window.location.href ='/material/nhapkho'" class="bg-yellow-600 text-white p-2 mr-4 rounded text-sm">Cập nhật ca làm</button>
+        <a th:href="@{/product/createNL/{id}(id=${maSP})}" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Thêm mới</a>
     </div>
 
     <div class=" bg-white bg-white mb-4 overflow-auto">
@@ -21,19 +16,21 @@
                 <th class="border px-4 py-2 text-left">#</th>
                 <th class="border px-4 py-2 text-left">Tên</th>
                 <th class="border px-4 py-2 text-left">Đơn vị tính</th>
-                <th class="border px-4 py-2 text-left">Số lượng tồn</th>
+                <th class="border px-4 py-2 text-left">Số lượng</th>
+<!--                <th class="border px-4 py-2 text-left">Tồn kho</th>-->
                 <th class="border px-4 py-2 text-left"></th>
             </tr>
             </thead>
-            <tbody>
-            <tr th:each="item, stat : ${listResult}" class="odd:bg-white even:bg-gray-50">
+            <tbody id="tbody">
+            <tr th:each="item, stat : ${list}" class="odd:bg-white even:bg-gray-50">
                 <td class="border px-4 py-2" th:text="${stat.index + 1}"></td>
                 <td class="border px-4 py-2" th:text="${item.tenNL}"></td>
-                <td class="border px-4 py-2" th:text="${item.donViTinh}"></td>
-                <td class="border px-4 py-2" th:text="${item.tonKho}"></td>
-                <td class="border px-4 py-2  space-x-2">
-                    <a th:href="@{/material/edit/{id}(id=${item.maNL})}" class="text-blue-600 hover:underline">Sửa</a>
-                    <a th:href="@{/material/delete/{id}(id=${item.maNL})}" class="text-blue-600 hover:underline">Xóa</a>
+                <td class="border px-4 py-2" th:text="${item.donviTinh}"></td>
+                <td class="border px-4 py-2" th:text="${item.soLuong}"></td>
+<!--                <td class="border px-4 py-2" th:text="${item.tonKho}"></td>-->
+                <td class="border px-4 py-2 space-x-2">
+                    <a th:href="@{/product/editNL/{maSP}/{maCTSP}(maSP=${item.maSP}, maCTSP=${item.maCTSP})}" class="text-blue-600 hover:underline">Sửa</a>
+                    <a th:href="@{/product/deleteNL/{maSP}/{maCTSP}(maSP=${item.maSP}, maCTSP=${item.maCTSP})}" class="text-red-600 hover:underline">Xóa</a>
                 </td>
             </tr>
             </tbody>
@@ -44,7 +41,7 @@
 <div layout:fragment="scripts">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('materialNavId')?.classList.add('font-bold', 'text-blue-800');
+            document.getElementById('producNavId')?.classList.add('font-bold', 'text-blue-800');
         });
         $('#myTable').DataTable({
           language: {

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{_layout}">
+<head>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+
+<body>
+
+<div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="">
+
+    <h2 class="text-xl font-semibold mb-4">Lịch làm việc</h2>
+
+    <div class="container mt-4">
+
+        <!-- TAB MENU -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="week-tab"
+                        data-bs-toggle="tab" data-bs-target="#week"
+                        type="button">Lịch làm việc trong tuần</button>
+            </li>
+
+            <li class="nav-item">
+                <button class="nav-link" id="excel-tab"
+                        data-bs-toggle="tab" data-bs-target="#excel"
+                        type="button">Cập nhật lịch theo Excel</button>
+            </li>
+        </ul>
+
+
+        <!-- TAB CONTENT-->
+        <div class="tab-content" id="myTabContent">
+
+            <!-- TAB 1 -->
+            <div class="tab-pane fade show active p-3" id="week" role="tabpanel">
+
+                <!-- FILTER BAR -->
+                <div class="row mb-4">
+
+                    <div class="col-md-3">
+                        <label class="form-label">Năm</label>
+                        <select id="yearSelect" class="form-select" onchange="loadWeeks()">
+                            <option value="2025" th:selected="${selectedYear == 2025}">2025</option>
+                            <option value="2026" th:selected="${selectedYear == 2026}">2026</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Tháng</label>
+                        <select id="monthSelect" class="form-select" onchange="loadWeeks()">
+                            <option th:each="m : ${#numbers.sequence(1,12)}"
+                                    th:value="${m}"
+                                    th:text="'Tháng ' + ${m}"
+                                    th:selected="${m == selectedMonth}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Tuần</label>
+                        <input hidden type="text" th:value="${selectedWeek}" id="defaultSelectedIndex"/>
+                        <select id="weekSelect" class="form-select"></select>
+                    </div>
+
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" onclick="filterWeek()">Xem lịch</button>
+                    </div>
+                </div>
+
+                <hr class="my-4"/>
+
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Ca sáng <br> 06:00 - 14:00</th>
+                        <th>Ca chiều <br> 14:00 - 22:00</th>
+                        <th>Ca tối <br> 22:00 - 06:00</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="day : ${lichLamViec}">
+                        <td>
+                            <b th:text="${day.ngayLam}"></b><br>
+                            <span th:text="${day.thu}" class="text-muted small"></span>
+                        </td>
+
+                        <td>
+                            <span th:each="nv : ${day.caSang}" th:text="${nv}" style="display: block; margin-bottom: 4px;"></span>
+                        </td>
+
+                        <td>
+                            <span th:each="nv : ${day.caChieu}" th:text="${nv}" style="display: block; margin-bottom: 4px;"></span>
+                        </td>
+
+                        <td>
+                            <span th:each="nv : ${day.caToi}" th:text="${nv}" style="display: block; margin-bottom: 4px;"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+
+            <!-- TAB 2 -->
+            <div class="tab-pane fade p-3" id="excel" role="tabpanel">
+
+
+                <form th:action="@{/employee/importExcel}" id="excelForm" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="dataImportJson" id="dataImportJson">
+                    <div class="mb-3">
+                        <label class="form-label">Chọn file Excel</label>
+                        <input type="file" name="file" accept=".xlsx,.xls" id="fileInput" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Import lịch làm việc</button>
+
+                </form>
+
+                <hr class="my-4"/>
+
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>NgayLam</th>
+                        <th>MaNV</th>
+                        <th>MaCa</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="dataImport">
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div layout:fragment="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        function loadWeeks() {
+            let year = parseInt(document.getElementById("yearSelect").value);
+            let month = parseInt(document.getElementById("monthSelect").value);
+            let firstDay = new Date(year, month - 1, 1);
+            let lastDay = new Date(year, month, 0);
+            let weeks = [];
+            let weekIndex = 1;
+            let current = new Date(firstDay);
+            while (current <= lastDay) {
+                let monday = new Date(current);
+                monday.setDate(current.getDate() - ((current.getDay() + 6) % 7));
+                let sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+                if (monday.getMonth() + 1 === month || sunday.getMonth() + 1 === month) {
+                    weeks.push({
+                        index: weekIndex,
+                        label: `Tuần ${weekIndex}: ${monday.toLocaleDateString()} → ${sunday.toLocaleDateString()}`,
+                        start: monday,
+                        end: sunday
+                    });
+                    weekIndex++;
+                }
+                current.setDate(current.getDate() + 7);
+        }
+        weekSelect = document.getElementById("weekSelect");
+        weekSelect.innerHTML = "";
+        weeks.forEach(w => {
+            let opt = document.createElement("option");
+            opt.value = w.index;
+            opt.text = w.label;
+            opt.dataset.start = w.start.toISOString().split("T")[0];
+            weekSelect.appendChild(opt);
+        });
+        let defaultSelectedIndex = document.getElementById("defaultSelectedIndex");
+        if(defaultSelectedIndex.value != '-1') weekSelect.selectedIndex = defaultSelectedIndex.value;
+        defaultSelectedIndex.value = '-1';
+    }
+    window.onload = loadWeeks;
+
+    function filterWeek() {
+        let week = document.getElementById("weekSelect");
+        let selectedOption = weekSelect.options[weekSelect.selectedIndex];
+        let startDate = selectedOption.dataset.start;
+        window.location.href = `/employee/schedule2?startDate=${startDate}`;
+    }
+
+    document.getElementById("fileInput").addEventListener("change", function (e) {
+        let file = e.target.files[0];
+        if (!file) return;
+
+        let reader = new FileReader();
+
+        reader.onload = function (evt) {
+            let data = evt.target.result;
+            let workbook = XLSX.read(data, { type: "binary" });
+            let sheet = workbook.Sheets[workbook.SheetNames[0]];
+            let rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            let tbody = document.getElementById("dataImport");
+            tbody.innerHTML = "";
+
+            for (let i = 1; i < rows.length; i++) {
+                let r = rows[i];
+                if (!r || r.length === 0) continue;
+
+                let ngayExcel = r[0];
+
+                // Convert Excel Date → JS Date
+                let dateJs = XLSX.SSF.parse_date_code(ngayExcel);
+                let formattedDate =
+                    `${dateJs.m}/${dateJs.d}/${dateJs.y}`;
+
+                let tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${r[1] || ""}</td>
+                    <td>${r[2] || ""}</td>
+                `;
+
+                tbody.appendChild(tr);
+            }
+        };
+
+        reader.readAsBinaryString(file);
+    });
+
+    document.getElementById("excelForm").addEventListener("submit", function (e) {
+
+        const rows = document.querySelectorAll("#dataImport tr");
+        let data = [];
+
+        rows.forEach(row => {
+            let cells = row.querySelectorAll("td");
+
+            data.push({
+                ngayLam: cells[0].innerText.trim(),
+                maNV: cells[1].innerText.trim(),
+                maCa: cells[2].innerText.trim()
+            });
+        });
+
+        document.getElementById("dataImportJson").value = JSON.stringify(data);
+
+    });
+    </script>
+</div>
+
+</body>
+</html>

@@ -26,4 +26,13 @@ public class Helpers {
         String formattedAmount = currencyVN.format(amount);
         return formattedAmount;
     }
+
+    public static String convertMoney(double amount){
+        Locale localeVN = new Locale("vi", "VN");
+
+        // Format tiền tệ
+        NumberFormat currencyVN = NumberFormat.getCurrencyInstance(localeVN);
+        String formattedAmount = currencyVN.format(amount);
+        return formattedAmount;
+    }
 }

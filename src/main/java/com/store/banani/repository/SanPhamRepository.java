@@ -19,6 +19,8 @@ public interface SanPhamRepository extends JpaRepository<SANPHAM, String> {
     @Query(value = "select * from LOAISP ",nativeQuery = true)
     List<Object[]> findAllLoaiSanPham();
 
+    @Query(value = "SELECT * FROM NGUYENLIEU WHERE MaCN = :maCN ",nativeQuery = true)
+    List<Object[]> findAllItemNL(@Param("maCN") String maCN);
 
     @Modifying
     @Transactional
@@ -32,9 +34,49 @@ public interface SanPhamRepository extends JpaRepository<SANPHAM, String> {
                         @Param("trangThai") String trangThai,
                         @Param("hinhAnh") String hinhAnh);
 
+    @Modifying
+    @Transactional
+    @Query(value = "insert into CT_SANPHAM values (:maCTSP,:soLuong,:maSP,:maNL);",
+            nativeQuery = true)
+    void insertNL(@Param("maCTSP") String maCTSP,
+                @Param("soLuong") int soLuong,
+                @Param("maSP") String maSP,
+                @Param("maNL") String maNL);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update NGUYENLIEU set TonKho = :tonKho where MaNL = :maNL",
+            nativeQuery = true)
+    void updateKho(@Param("tonKho") int tonKho,
+                @Param("maNL") String maNL);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update CT_SANPHAM set SoLuong = :soLuong, MaSP = :maSP,MaNL = :maNL where MaCTSP = :maCTSP",
+            nativeQuery = true)
+    void updateNL(@Param("soLuong") int soLuong,
+                  @Param("maSP") String maSP,
+                  @Param("maNL") String maNL,
+                  @Param("maCTSP") String maCTSP);
+
+    @Query(value = "SELECT * FROM CT_SANPHAM WHERE MaCTSP = :maCTSP ",nativeQuery = true)
+    List<Object[]> getCTNL(@Param("maCTSP") String maCTSP);
+
+    @Query(value = "select ct.MaCTSP,ct.MaSP,sp.TenSP,nl.MaNL,nl.TonKho,nl.TenNL,ct.SoLuong,nl.DonViTinh" +
+            " from CT_SANPHAM ct INNER JOIN NGUYENLIEU nl ON ct.MaNL = nl.MaNL " +
+            " INNER JOIN SANPHAM sp ON ct.MaSP = sp.MaSP " +
+            " where ct.MaSP = :maSP",
+            nativeQuery = true)
+    List<Object[]> getNguyenLieu(@Param("maSP") String maSP);
+
+
     @Query(value = "select * from SANPHAM where MaSP = :maSP",
             nativeQuery = true)
     List<Object[]> get(@Param("maSP") String maSP);
+
+    @Query(value = "select * from NGUYENLIEU where MaNL = :maNL",
+            nativeQuery = true)
+    List<Object[]> getNguyenLieu2(@Param("maNL") String maNL);
 
     @Modifying
     @Transactional
@@ -53,4 +95,10 @@ public interface SanPhamRepository extends JpaRepository<SANPHAM, String> {
     @Query(value = "delete SANPHAM where MaSP = :maSP",
             nativeQuery = true)
     void delete(@Param("maSP") String maSP);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete CT_SANPHAM where MaCTSP = :maCTSP",
+            nativeQuery = true)
+    void deleteNL(@Param("maCTSP") String maCTSP);
 }

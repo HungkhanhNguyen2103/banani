@@ -31,6 +31,15 @@ public interface DonHangRepository extends JpaRepository<DONHANG, String> {
             "where dd.MaDD = :maDD",nativeQuery = true)
     List<Object[]> chitietDonDat(@Param("maDD") String maDD);
 
+    @Query(value = "select nl.MaNL,nl.TonKho, SUM(ct2.SoLuong) AS TongSoLuong from DONDAT dd " +
+            "left join CT_DONDAT ct on dd.MaDD = ct.MaDD " +
+            "left join SANPHAM sp on ct.MaSP = sp.MaSP " +
+            "left join CT_SANPHAM ct2 on ct2.MaSP = sp.MaSP " +
+            "left join NGUYENLIEU nl on nl.MaNL = ct2.MaNL " +
+            "where dd.MaDD = :maDD " +
+            "GROUP BY nl.MaNL, nl.TonKho ",nativeQuery = true)
+    List<Object[]> chitietDonDat2(@Param("maDD") String maDD);
+
     @Query(value = "select MaHD from HOADON where MaDD = :maDD",nativeQuery = true)
     List<Object[]> getPayment(@Param("maDD") String maDD);
 

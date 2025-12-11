@@ -31,8 +31,9 @@
                 <td class="border px-4 py-2" th:text="${item.donGiaText}"></td>
                 <td class="border px-4 py-2" th:text="${item.donviTinh}"></td>
                 <td class="border px-4 py-2" th:text="${item.trangThai}"></td>
-                <td class="border px-4 py-2" th:text="${item.tenLoaiSP}"></td>
+                <td class="border px-4 py-2" th:text="${item.tenLoaiSP}">
                 <td class="border px-4 py-2 space-x-2">
+                    <a th:href="@{/product/dsNguyenLieu/{id}(id=${item.maSP})}" class="text-green-600 hover:underline">Nguyên liệu</a>
                     <a th:href="@{/product/edit/{id}(id=${item.maSP})}" class="text-blue-600 hover:underline">Sửa</a>
                     <a th:href="@{/product/delete/{id}(id=${item.maSP})}" class="text-red-600 hover:underline">Xóa</a>
                 </td>

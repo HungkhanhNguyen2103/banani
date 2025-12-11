@@ -13,8 +13,17 @@ import java.util.List;
 
 @Repository
 public interface NguyenLieuRepository extends JpaRepository<NGUYENLIEU, String> {
+
+
     @Query(value = "SELECT * FROM NGUYENLIEU ",nativeQuery = true)
     List<Object[]> findAllItem();
+
+    @Query(value = "SELECT pn.MaPN, CONVERT(varchar(10), pn.NgayNhap, 105) AS NgayNhapFormatted, pn.MaNV,nv.TenNV, SUM(ct.SoLuong) as TongSoLuong, CAST(SUM(ct.SoLuong * ct.DonGia) AS FLOAT) AS TongGia FROM PHIEUNHAPKHO pn " +
+            "INNER JOIN CT_PHIEUNHAP ct ON pn.MaPN = ct.MaPN " +
+            "INNER JOIN NHANVIEN nv ON pn.MaNV = nv.MaNV " +
+            "WHERE pn.MaCN = :maCN " +
+            "GROUP BY pn.MaPN,pn.NgayNhap, pn.MaNV,nv.TenNV",nativeQuery = true)
+    List<Object[]> findAllItemNhapKho(@Param("maCN") String maCN);
 
     @Modifying
     @Transactional
@@ -26,9 +35,34 @@ public interface NguyenLieuRepository extends JpaRepository<NGUYENLIEU, String> 
                 @Param("tonKho") int tonKho,
                 @Param("maCN") String maCN);
 
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into PHIEUNHAPKHO values (:maPN,GETDATE(),:maNV,:maCN);",
+            nativeQuery = true)
+    void nhapKho(@Param("maPN") String maPN,
+                @Param("maNV") String maNV,
+                @Param("maCN") String maCN);
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into CT_PHIEUNHAP values (:maPN,:maNL,:soLuong,:donGia);",
+            nativeQuery = true)
+    void nhapKhoCT(@Param("maPN") String maPN,
+                 @Param("maNL") String maNL,
+                 @Param("soLuong") int soLuong,
+                   @Param("donGia") double donGia);
+
     @Query(value = "select * from NGUYENLIEU where MaNL = :maNL",
             nativeQuery = true)
     List<Object[]> get(@Param("maNL") String maNL);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update NGUYENLIEU set TonKho = :tonKho where MaNL = :maNL",
+            nativeQuery = true)
+    void updateKho2(@Param("tonKho") int tonKho,
+                   @Param("maNL") String maNL);
 
 
     @Modifying
@@ -46,4 +80,21 @@ public interface NguyenLieuRepository extends JpaRepository<NGUYENLIEU, String> 
     @Query(value = "delete NGUYENLIEU where MaNL = :maNL",
             nativeQuery = true)
     void delete(@Param("maNL") String maNL);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into PHIEUXUATKHO values (:maPX,GETDATE(),:maNV,:maCN);",
+            nativeQuery = true)
+    void xuatKho(@Param("maPX") String maPX,
+                 @Param("maNV") String maNV,
+                 @Param("maCN") String maCN);
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into CT_PHIEUXUAT values (:maPX,:maNL,:soLuong);",
+            nativeQuery = true)
+    void xuatKhoCT(@Param("maPX") String maPX,
+                 @Param("maNL") String maNL,
+                 @Param("soLuong") int soLuong);
 }

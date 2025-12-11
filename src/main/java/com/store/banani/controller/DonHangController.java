@@ -32,16 +32,18 @@ public class DonHangController {
     private final NhanVienRepository nhanVienRepository;
     private final ChiNhanhRepository chiNhanhRepository;
     private final KhachHangRepository khachHangRepository;
+    private final NguyenLieuRepository nguyenLieuRepository;
 
     public DonHangController(DonHangRepository repository,SanPhamRepository sanPhamRepository,
                              BanRepository banRepository,NhanVienRepository nhanVienRepository,
-                             ChiNhanhRepository chiNhanhRepository, KhachHangRepository khachHangRepository){
+                             ChiNhanhRepository chiNhanhRepository, KhachHangRepository khachHangRepository,NguyenLieuRepository nguyenLieuRepository){
         this.repository = repository;
         this.sanPhamRepository = sanPhamRepository;
         this.banRepository = banRepository;
         this.nhanVienRepository = nhanVienRepository;
         this.chiNhanhRepository = chiNhanhRepository;
         this.khachHangRepository = khachHangRepository;
+        this.nguyenLieuRepository = nguyenLieuRepository;
     }
 
     @GetMapping("/order")
@@ -158,6 +160,20 @@ public class DonHangController {
         khDTO.setMaKH((String) kh[0]);
         khDTO.setEmailKH((String) kh[3]);
         return ResponseEntity.ok(khDTO);
+    }
+
+    @PostMapping("/order/ktTonKho")
+    public ResponseEntity<String> ktTonKho(@RequestParam String maSP,@RequestParam int amount){
+        var found = sanPhamRepository.getNguyenLieu(maSP);
+        if(found.isEmpty()) return ResponseEntity.ok("Không");
+        for (var i : found){
+            var soLuong = (int) i[6];
+            var tonKho = (int) i[4];
+            var tenNL = (String) i[5];
+            if(tonKho < soLuong * amount) return ResponseEntity.ok("Kho không đủ nguyên liệu " + tenNL);
+        }
+
+        return ResponseEntity.ok("Có");
     }
 
     @GetMapping("/order/detail/{id}")
@@ -549,6 +565,7 @@ public class DonHangController {
 
     @PostMapping("/order/edit")
     public String editSP( Model model, DonDatDTO dondatDTO,HttpServletRequest request){
+        var maCN = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
         dondatDTO.setMaNV(CookieUtils.getCookieValue(request,CookieUtils.maNV));
         if(dondatDTO.getMaKH().isEmpty()){
             dondatDTO.setMaKH(Helpers.generateId());
@@ -564,6 +581,16 @@ public class DonHangController {
             var idHoaHon = Helpers.generateId();
             repository.payment(idHoaHon,dondatDTO.getMaDD(),dondatDTO.getTongTien2(),dondatDTO.getThanhToan(),dondatDTO.getMaNV());
             banRepository.update("Trống",dondatDTO.getMaBan());
+            var maPX = Helpers.generateId();
+            nguyenLieuRepository.xuatKho(maPX,dondatDTO.getMaNV(),maCN);
+            var chiTiet = repository.chitietDonDat2(dondatDTO.getMaDD());
+            for (var i : chiTiet){
+                var maNL = (String) i[0];
+                var tonKho = (int) i[1];
+                var tongSoLuong = (int) i[2];
+                nguyenLieuRepository.xuatKhoCT(maPX,maNL,tongSoLuong);
+                sanPhamRepository.updateKho(tonKho - tongSoLuong,maNL);
+            }
         }
 
         if(dondatDTO.getTrangThai().equals("Đang xử lý")){
@@ -681,6 +708,7 @@ public class DonHangController {
 
         model.addAttribute("listResultSP", listResultSP);
         model.addAttribute("ctSanPhamDTO",chiTiet );
+        model.addAttribute("maSP",maSP );
 
         return "dondat/editSP";
     }

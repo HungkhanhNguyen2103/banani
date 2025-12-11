@@ -9,9 +9,15 @@
 <!--        <button class="bg-blue-600 text-white p-2 mr-4 rounded text-sm">Phân công lịch làm</button>-->
 <!--    </div>-->
 
-    <div class="mb-6">
-        <button onclick="window.location.href ='/user/create'" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo tài khoản</button>
+    <div class="row">
+        <div class="mb-6 col-3">
+            <button onclick="window.location.href ='/user/create'" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo tài khoản</button>
+        </div>
+        <div class="mb-6 col-3">
+            <button onclick="window.location.href ='/employee/schedule'" class="bg-yellow-600 text-white p-2 mr-4 rounded text-sm">Cập nhật ca làm</button>
+        </div>
     </div>
+
 
     <div class=" bg-white bg-white mb-4 overflow-auto">
         <table id="myTable" class="min-w-full table-auto border-collapse">

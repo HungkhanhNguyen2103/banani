@@ -15,14 +15,14 @@
                     <select disabled required th:field="*{maBan}" class="w-full border px-4 py-2 rounded-md">
                         <option th:each="item : ${listBan}"
                                 th:value="${item.maBAN}"
-                                th:text="${item.tenBAN + ',' + item.khuVuc}">
+                                th:text="${item.tenBAN + ', ' + item.khuVuc}">
                         </option>
                     </select>
                 </div>
             </div>
 
             <div class="row">
-                <a th:href="@{/order/detail/{id}/createSP(id=${maDD})}" style="width:100px;margin-bottom:1rem;text-align:center" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</a>
+                <a th:href="@{/order/detail/{id}/createSP(id=${maDD})}" style="width:100px;margin-bottom:1rem;text-align:center" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Thêm mới</a>
                 <table id="myTable" class="min-w-full table-auto border-collapse">
                     <thead class="bg-gray-200">
                     <tr>
