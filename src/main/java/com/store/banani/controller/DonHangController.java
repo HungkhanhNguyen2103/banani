@@ -101,7 +101,9 @@ public class DonHangController {
             b.setTrangThai((String) item[3]);
             b.setMaCN((String) item[4]);
             b.setChinhanh((String) item[7]);
-            listBan.add(b);
+            if(b.getTrangThai().equals("Trống")){
+                listBan.add(b);
+            }
         }
 
         //var maChiNhanh = CookieUtils.getCookieValue(request,CookieUtils.machiNhanh);
@@ -140,7 +142,7 @@ public class DonHangController {
         donDatDTO.setMaDD(Helpers.generateId());
         donDatDTO.setTrangThai("Đang xử lý");
 
-        var maKH = Helpers.generateId();
+        var maKH = donDatDTO.getMaKH().isEmpty() ? Helpers.generateId() : donDatDTO.getMaKH();
         khachHangRepository.insert(maKH,donDatDTO.getTenKH(),donDatDTO.getSDT(),donDatDTO.getEmailKH());
         donDatDTO.setMaKH(maKH);
         repository.createDondat(donDatDTO.getMaDD(),maKH,donDatDTO.getMaNV(),donDatDTO.getMaBan(),donDatDTO.getTrangThai());
