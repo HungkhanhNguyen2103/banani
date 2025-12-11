@@ -44,7 +44,7 @@
                     <select required th:field="*{maBan}" class="w-full border px-4 py-2 rounded-md">
                         <option th:each="item : ${listBan}"
                                 th:value="${item.maBAN}"
-                                th:text="${item.tenBAN + ',' + item.khuVuc + ',' + item.chinhanh}">
+                                th:text="${item.tenBAN + ', ' + item.khuVuc + ', ' + item.chinhanh}">
                         </option>
                     </select>
                 </div>
