@@ -119,7 +119,29 @@ public class SanPhamController {
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
 
-        sanPhamRepository.update(sanPhamDTO.getMaSP(),sanPhamDTO.getTenSP(),sanPhamDTO.getMaLSP(),sanPhamDTO.getDonGia(),sanPhamDTO.getDonviTinh(),sanPhamDTO.getTrangThai(),sanPhamDTO.getHinhAnh());
+        var base64Image = sanPhamDTO.getHinhAnh();
+        String baseFolder = System.getProperty("user.dir") + "/uploads/";
+        var fileName = Helpers.generateId() + ".png";
+        var filePath = "/uploads/" + fileName;
+        try {
+            Files.createDirectories(Paths.get(baseFolder));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        var outputPath = baseFolder + fileName;
+        if (base64Image.contains(",")) {
+            base64Image = base64Image.split(",")[1];
+        }
+
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+
+        try (OutputStream stream = new FileOutputStream(outputPath)) {
+            stream.write(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        sanPhamRepository.update(sanPhamDTO.getMaSP(),sanPhamDTO.getTenSP(),sanPhamDTO.getMaLSP(),sanPhamDTO.getDonGia(),sanPhamDTO.getDonviTinh(),sanPhamDTO.getTrangThai(),filePath);
         return "redirect:/product";
     }
 
@@ -145,12 +167,14 @@ public class SanPhamController {
 
         var base64Image = sanPhamDTO.getHinhAnh();
         String baseFolder = System.getProperty("user.dir") + "/uploads/";
+        var fileName = Helpers.generateId() + ".png";
+        var filePath = "/uploads/" + fileName;
         try {
             Files.createDirectories(Paths.get(baseFolder));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        var outputPath = baseFolder + Helpers.generateId();
+        var outputPath = baseFolder + fileName;
         if (base64Image.contains(",")) {
             base64Image = base64Image.split(",")[1];
         }
@@ -164,7 +188,7 @@ public class SanPhamController {
         }
 
         sanPhamDTO.setMaSP(Helpers.generateId());
-        sanPhamRepository.insert(sanPhamDTO.getMaSP(),sanPhamDTO.getTenSP(),sanPhamDTO.getMaLSP(),sanPhamDTO.getDonGia(),sanPhamDTO.getDonviTinh(),sanPhamDTO.getTrangThai(),sanPhamDTO.getHinhAnh());
+        sanPhamRepository.insert(sanPhamDTO.getMaSP(),sanPhamDTO.getTenSP(),sanPhamDTO.getMaLSP(),sanPhamDTO.getDonGia(),sanPhamDTO.getDonviTinh(),sanPhamDTO.getTrangThai(),filePath);
         return "redirect:/product";
 
     }
