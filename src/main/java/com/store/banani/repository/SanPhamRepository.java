@@ -101,4 +101,10 @@ public interface SanPhamRepository extends JpaRepository<SANPHAM, String> {
     @Query(value = "delete CT_SANPHAM where MaCTSP = :maCTSP",
             nativeQuery = true)
     void deleteNL(@Param("maCTSP") String maCTSP);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete CT_SANPHAM where MaSP = :maSP",
+            nativeQuery = true)
+    void deleteNLBySP(@Param("maSP") String maSP);
 }

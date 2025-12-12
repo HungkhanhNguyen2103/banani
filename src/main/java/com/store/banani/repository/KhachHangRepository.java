@@ -30,6 +30,7 @@ public interface KhachHangRepository extends JpaRepository<KHACHHANG, String> {
                 @Param("sdtKH") String sdtKH,
                 @Param("emailKH") String emailKH);
 
+
     @Query(value = "SELECT * from KHACHHANG where SdtKH = :sdt",
             nativeQuery = true)
     List<Object[]> getKhachHang(@Param("sdt") String sdt);

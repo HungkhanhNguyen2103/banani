@@ -143,7 +143,15 @@ public class DonHangController {
         donDatDTO.setTrangThai("Đang xử lý");
 
         var maKH = donDatDTO.getMaKH().isEmpty() ? Helpers.generateId() : donDatDTO.getMaKH();
-        khachHangRepository.insert(maKH,donDatDTO.getTenKH(),donDatDTO.getSDT(),donDatDTO.getEmailKH());
+        var found = khachHangRepository.getKhachHang(donDatDTO.getSDT());
+        if(found.isEmpty()){
+            khachHangRepository.insert(maKH,donDatDTO.getTenKH(),donDatDTO.getSDT(),donDatDTO.getEmailKH());
+        }
+        else{
+            maKH = (String) found.get(0)[0];
+            khachHangRepository.update(maKH,donDatDTO.getTenKH(),donDatDTO.getSDT(),donDatDTO.getEmailKH());
+        }
+
         donDatDTO.setMaKH(maKH);
         repository.createDondat(donDatDTO.getMaDD(),maKH,donDatDTO.getMaNV(),donDatDTO.getMaBan(),donDatDTO.getTrangThai());
         String url = "redirect:/order/detail/" + donDatDTO.getMaDD();
@@ -552,7 +560,7 @@ public class DonHangController {
             sp.setHinhAnh((String) item[6]);
             sp.setTenLoaiSP((String) item[8]);
 
-            if(sp.getHinhAnh().isEmpty()) sp.setHinhAnh("http://localhost:8080/image/no-image.png");
+            if(sp.getHinhAnh() == null || sp.getHinhAnh().isEmpty()) sp.setHinhAnh("http://localhost:8080/image/no-image.png");
 
             listResultSP.add(sp);
         }

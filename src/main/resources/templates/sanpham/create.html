@@ -3,13 +3,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{_layout}">
 <div layout:fragment="content" class="bg-white px-6 pt-6 border-b" style="width: -webkit-fill-available">
-    <h2 class="text-xl font-semibold mb-4">Tạo sản phẩm</h2>
+    <h2 class="text-xl font-semibold mb-4">Thêm sản phẩm</h2>
 
     <div class=" bg-white bg-white mb-4">
         <form th:action="@{/product/create}" th:object="${sanphamDTO}" method="post" class="space-y-5">
 
             <div class="row">
                 <div class="col-6">
+                    <input th:field="*{maSP}" type="text" hidden/>
                     <label class="block mb-1 font-medium text-gray-700">Tên sản phẩm</label>
                     <input required type="text" th:field="*{tenSP}" placeholder="Tên sản phẩm"
                            class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" />
@@ -49,8 +50,8 @@
                 <div class="col-12">
                     <label class="block mb-1 font-medium text-gray-700">Trạng thái</label>
                     <select required th:field="*{trangThai}" class="w-full border px-4 py-2 rounded-md">
-                        <option value="Còn bán">Còn bán</option>
-                        <option value="Hết hàng">Hết hàng</option>
+                        <option value="Đang bán">Đang bán</option>
+                        <option value="Ngừng bán">Ngừng bán</option>
                     </select>
                 </div>
 
@@ -63,14 +64,13 @@
                   file:rounded-full file:border-0 file:text-sm file:font-semibold
                   file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
 
-                    <div id="previewContainer" class="mt-4 hidden">
+                    <div id="previewContainer" class="mt-4">
                         <p class="text-sm text-gray-500 mb-1">Ảnh xem trước:</p>
                         <input hidden id="imgInput" th:field="*{hinhAnh}"/>
                         <img id="preview" alt="Preview" th:src="*{hinhAnh}" class="max-h-60 object-contain border border-gray-200 rounded-lg shadow-sm" />
                     </div>
                 </div>
             </div>
-
 
 
             <button type="submit"
@@ -82,8 +82,25 @@
     </div>
 </div>
 
-<!--<div layout:fragment="scripts">-->
-<!--    <script>-->
-<!--    </script>-->
-<!--</div>-->
+<div layout:fragment="scripts">
+    <script>
+        const imageInput = document.getElementById("imageInput");
+        const preview = document.getElementById("preview");
+        const imgInput = document.getElementById("imgInput");
+
+        imageInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                imgInput.value = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        });
+    </script>
+</div>
 </html>

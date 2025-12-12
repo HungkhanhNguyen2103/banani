@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 
 @Controller
@@ -46,7 +52,7 @@ public class SanPhamController {
             sp.setHinhAnh((String) item[6]);
             sp.setTenLoaiSP((String) item[8]);
 
-            if(sp.getHinhAnh().isEmpty()) sp.setHinhAnh("http://localhost:8080/image/no-image.png");
+            if(sp.getHinhAnh() == null || sp.getHinhAnh().isEmpty()) sp.setHinhAnh("http://localhost:8080/image/no-image.png");
 
             listResult.add(sp);
         }
@@ -120,6 +126,7 @@ public class SanPhamController {
     @GetMapping("/product/delete/{id}")
     public String delete(@PathVariable("id") String id){
         sanPhamRepository.delete(id);
+        sanPhamRepository.deleteNLBySP(id);
         return "redirect:/product";
     }
 
@@ -135,6 +142,26 @@ public class SanPhamController {
         model.addAttribute("tenNV", CookieUtils.getCookieValue(request,CookieUtils.tenNV));
         model.addAttribute("vaiTro", CookieUtils.getCookieValue(request,CookieUtils.vaiTro));
         model.addAttribute("chiNhanh", CookieUtils.getCookieValue(request,CookieUtils.chiNhanh));
+
+        var base64Image = sanPhamDTO.getHinhAnh();
+        String baseFolder = System.getProperty("user.dir") + "/uploads/";
+        try {
+            Files.createDirectories(Paths.get(baseFolder));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        var outputPath = baseFolder + Helpers.generateId();
+        if (base64Image.contains(",")) {
+            base64Image = base64Image.split(",")[1];
+        }
+
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+
+        try (OutputStream stream = new FileOutputStream(outputPath)) {
+            stream.write(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         sanPhamDTO.setMaSP(Helpers.generateId());
         sanPhamRepository.insert(sanPhamDTO.getMaSP(),sanPhamDTO.getTenSP(),sanPhamDTO.getMaLSP(),sanPhamDTO.getDonGia(),sanPhamDTO.getDonviTinh(),sanPhamDTO.getTrangThai(),sanPhamDTO.getHinhAnh());
