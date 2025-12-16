@@ -72,7 +72,8 @@ public class SanPhamDTO {
     }
 
     public void setHinhAnh(String hinhAnh) {
-        this.hinhAnh = hinhAnh;
+        if(hinhAnh == null) this.hinhAnh = "";
+        else this.hinhAnh = hinhAnh;
     }
 
     public String getDonGiaText() {
