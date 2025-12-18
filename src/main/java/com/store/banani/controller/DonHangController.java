@@ -225,17 +225,17 @@ public class DonHangController {
             item.setGhiChu((String) c[19]);
 
             var itemSp = new SanPhamDTO();
-            itemSp.setTenSP((String) c[21]);
-            itemSp.setMaLSP((String) c[22]);
-            if(c[23] != null){
-                BigDecimal big = (BigDecimal) c[23];
+            itemSp.setTenSP((String) c[20]);
+            itemSp.setMaLSP((String) c[21]);
+            if(c[22] != null){
+                BigDecimal big = (BigDecimal) c[22];
                 itemSp.setDonGia(big.floatValue());
                 itemSp.setDonGiaText(Helpers.convertMoney(itemSp.getDonGia()));
                 tongTien += (float) (itemSp.getDonGia() * item.getSoLuong());
             }
 
-            itemSp.setDonviTinh((String) c[24]);
-            itemSp.setHinhAnh((String) c[26]);
+            itemSp.setDonviTinh((String) c[23]);
+            itemSp.setHinhAnh((String) c[25]);
             item.setSanPhamDTO(itemSp);
 
             listSP.add(item);

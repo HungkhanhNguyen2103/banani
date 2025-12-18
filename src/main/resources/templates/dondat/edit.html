@@ -22,7 +22,7 @@
             </div>
 
             <div class="row">
-                <a th:href="@{/order/detail/{id}/createSP(id=${maDD})}" style="width:100px;margin-bottom:1rem;text-align:center" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Thêm mới</a>
+                <a th:unless="${isPayment}" th:href="@{/order/detail/{id}/createSP(id=${maDD})}" style="width:100px;margin-bottom:1rem;text-align:center" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Thêm mới</a>
                 <table id="myTable" class="min-w-full table-auto border-collapse">
                     <thead class="bg-gray-200">
                     <tr>
@@ -44,7 +44,9 @@
                         <td class="border px-4 py-2"><img style="width:60px;height:60px" th:src="${item.sanPhamDTO.hinhAnh}"/></td>
                         <td id="giaTien" class="giaTien border px-4 py-2" th:text="${item.sanPhamDTO.donGiaText}"></td>
                         <td class="border px-4 py-2" th:text="${item.soLuong}"></td>
-                        <td class="border px-4 py-2 space-x-2">
+                        <td th:if="${isPayment}" class="border px-4 py-2 space-x-2">
+                        </td>
+                        <td th:unless="${isPayment}" class="border px-4 py-2 space-x-2">
                             <a th:href="@{/order/detail/{id}/editSP/{maSP}(id=${maDD}, maSP=${item.maSP})}" class="text-blue-600 hover:underline">Cập nhật</a>
                             <a th:href="@{/order/detail/{id}/removeSP/{maSP}(id=${maDD}, maSP=${item.maSP})}" class="text-red-600 hover:underline">Xóa</a>
                         </td>

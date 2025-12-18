@@ -6,7 +6,7 @@
 
     <h2 class="text-xl font-semibold mb-4">Quản lý bàn và khu vực</h2>
 
-    <div class="mb-6">
+    <div th:if="${vaiTro == 'Admin' or vaiTro == 'Quản lý'}" class="mb-6">
         <button onclick="window.location.href ='/table/create'" class="bg-green-600 text-white p-2 mr-4 rounded text-sm">Tạo mới</button>
     </div>
 
