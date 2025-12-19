@@ -175,8 +175,9 @@ public class DonHangController {
 
     @PostMapping("/order/ktTonKho")
     public ResponseEntity<String> ktTonKho(@RequestParam String maSP,@RequestParam int amount){
+        if(amount == 0) return ResponseEntity.ok("Số lượng không hợp lệ");
         var found = sanPhamRepository.getNguyenLieu(maSP);
-        if(found.isEmpty()) return ResponseEntity.ok("Không");
+        if(found.isEmpty()) return ResponseEntity.ok("Chưa xác định được nguyên liệu");
         for (var i : found){
             var soLuong = (int) i[6];
             var tonKho = (int) i[4];
@@ -225,17 +226,17 @@ public class DonHangController {
             item.setGhiChu((String) c[19]);
 
             var itemSp = new SanPhamDTO();
-            itemSp.setTenSP((String) c[20]);
-            itemSp.setMaLSP((String) c[21]);
-            if(c[22] != null){
-                BigDecimal big = (BigDecimal) c[22];
+            itemSp.setTenSP((String) c[21]);
+            itemSp.setMaLSP((String) c[22]);
+            if(c[23] != null){
+                BigDecimal big = (BigDecimal) c[23];
                 itemSp.setDonGia(big.floatValue());
                 itemSp.setDonGiaText(Helpers.convertMoney(itemSp.getDonGia()));
                 tongTien += (float) (itemSp.getDonGia() * item.getSoLuong());
             }
 
-            itemSp.setDonviTinh((String) c[23]);
-            itemSp.setHinhAnh((String) c[25]);
+            itemSp.setDonviTinh((String) c[24]);
+            itemSp.setHinhAnh((String) c[26]);
             item.setSanPhamDTO(itemSp);
 
             listSP.add(item);
